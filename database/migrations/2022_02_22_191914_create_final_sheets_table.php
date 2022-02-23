@@ -19,11 +19,13 @@ return new class extends Migration
             $table->foreignId("college_id");
             $table->foreignId("stage_id");
             $table->foreignId("year_id");
+            $table->foreignId("user_id");
             $table->float('average')->default(0);
             $table->float('avg_1st_rank')->default(0);
             $table->foreignId('study_type_id')->default(1);
             $table->foreignId('graduation_degree_id')->default(1);
             $table->string('number_date_graduation_degree')->default('');
+            $table->boolean('sended')->default(false);
             $table->timestamps();
         });
     }

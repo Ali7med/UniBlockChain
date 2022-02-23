@@ -14,7 +14,7 @@ class FinalSheetController extends Controller
      */
     public function index()
     {
-        $final=FinalSheet::all();
+        $final=FinalSheet::where('sended' , false)->get();
         return view('dashboard',['data'=>$final]);
     }
 

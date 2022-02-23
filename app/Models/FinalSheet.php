@@ -27,6 +27,10 @@ class FinalSheet extends Model
     {
         return $this->belongsTo(StudyType::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function graduate()
     {
         return $this->belongsTo(GraduationDegree::class,"graduation_degree_id" , "id");

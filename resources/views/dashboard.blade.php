@@ -24,6 +24,8 @@
                                 <td>Study Type</td>
                                 <td>Graduation Degree</td>
                                 <td>Number Date Graduation Degree</td>
+                                <td>All<input type="checkbox" name="" id=""></td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,11 +41,16 @@
                                 <td>{{ $Item->study_type->name }}</td>
                                 <td>{{ $Item->graduate->name }}</td>
                                 <td>{{ $Item->number_date_graduation_degree }}</td>
+                                <td><input type="checkbox" name="ID{{ $Item->id }}" id=""></td>
+                                <td>
+                                    <a href="{{ route('phase1.store',['id'=>$Item->id]) }}" class="btn btn-primary">Do</a>
+                                </td>
                             </tr>
                             @endforeach
 
                         </tbody>
                     </table>
+                    <input type="checkbox" name="ID{{ $Item->id }}" id=""> I Agree for Exporting to the Daen  <a href="{{ route('phase1.store',['id'=>0]) }}" class="btn btn-primary">Proccess</a>
                 </div>
             </div>
         </div>
