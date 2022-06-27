@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Dashboard') }} | Exam committee
         </h2>
     </x-slot>
 
@@ -47,10 +47,9 @@
                                 </td>
                             </tr>
                             @endforeach
-
                         </tbody>
                     </table>
-                    <input type="checkbox" name="ID{{ $Item->id }}" id=""> I Agree for Exporting to the Daen  <a href="{{ route('phase1.store',['id'=>0]) }}" class="btn btn-primary">Proccess</a>
+                    <input type="checkbox" name="IDall" id=""> I Agree for Exporting to the Daen  <a href="{{ route('phase1.store',['id'=>0]) }}" class="btn btn-primary">Proccess</a>
                 </div>
             </div>
         </div>

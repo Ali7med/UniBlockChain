@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Algorithm Phase 1 (Dean)') }}
+            {{ __('Algorithm Phase 2 (Head University)') }}
         </h2>
     </x-slot>
 
@@ -15,7 +15,6 @@
 
                             @foreach ($data as $Item)
                             <div class="card" >
-
                                 <div class="card-body">
                                   {{-- <h5 class="card-title">{{ $Item->student->name }}</h5> --}}
                                   <p class="card-text">
@@ -58,14 +57,32 @@
                                                 <td>{{ $Item->created_at }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Committe Hash</th>
-                                                <th>{{ $Item->hash}}</th>
+                                                <th>Orginal Hash</th>
+                                                <th>{{ $Item->hash2}}</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Dean Hash</th>
+                                                <th>{{ $Item->phase1->hash }}</th>
+                                                <th><i
+                                                    @if ($Item->hash2==$Item->hash && $Item->hash2==$Item->phase1->hash)
+                                                    style="color:green;font-size:25px" class="fa-solid fa-badge-check"
+                                                    @else
+                                                    style="color:red;font-size:25px" class="fa-solid fa-folder-xmark"
+                                                    @endif
+                                                    ></i>
+                                                </th>
                                             </tr>
                                             <tr>
                                                 <th>Current Hash</th>
-                                                <th>{{ $Item->hash2 }}</th>
-                                                <th><i style="color:green;font-size:25px" class="fa-solid fa-badge-check"></i></th>
-                                            </tr>
+                                                <th>{{ $Item->hash }}</th>
+                                                <th><i
+                                                    @if ($Item->hash2==$Item->hash && $Item->hash2==$Item->phase1->hash)
+                                                    style="color:green;font-size:25px" class="fa-solid fa-badge-check"
+                                                    @else
+                                                    style="color:red;font-size:25px" class="fa-solid fa-folder-xmark"
+                                                    @endif
+                                                    ></i>
+                                                </th>                                            </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
@@ -73,12 +90,16 @@
                                         </tbody>
                                     </table>
                                   </p>
-                                  <a href="{{ route('phase2.store',['id'=>$Item->id]) }}" class="btn btn-primary">Approve !!!</a>
+                                    @if ($Item->hash2==$Item->hash && $Item->hash2==$Item->phase1->hash)
+                                        <a href="{{ route('phase2.store',['id'=>$Item->id]) }}" class="btn btn-primary">Approve !!!</a>
+                                    @else
+                                        <a href="#" class="btn btn-outline-danger">Not Approved !!!</a>
+                                    @endif
                                 </div>
                             </div>
                             @endforeach
                             <hr>
-                    <input type="checkbox" name="IDAll" id=""> I Agree for Exporting to the University Head  <a href="{{ route('phase2.store',['id'=>0]) }}" class="btn btn-primary">Proccess</a>
+                    <input type="checkbox" name="IDAll" id=""> I Agree for Exporting to the Afference department  <a href="{{ route('phase2.store',['id'=>0]) }}" class="btn btn-primary">Proccess</a>
                 </div>
             </div>
         </div>

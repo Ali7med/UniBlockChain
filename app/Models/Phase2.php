@@ -7,20 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
-class Phase1 extends Model
+class Phase2 extends Model
 {
     use HasFactory;
     protected  $guarded=[];
-
     public function student()
     {
         return $this->belongsTo(Student::class);
     }
-    public function department_head()
+    public function phase1()
     {
-        return $this->belongsTo(User::class,"department_head_id","id");
+        return $this->belongsTo(Phase1::class);
     }
-    public function dean()
+    public function head_uni()
     {
         return $this->belongsTo(User::class);
     }
@@ -45,6 +44,4 @@ class Phase1 extends Model
         );
 
     }
-
-
 }

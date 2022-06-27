@@ -16,6 +16,26 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('form')" :active="request()->routeIs('form')">
+                        Form
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('formTranScript')" :active="request()->routeIs('formTranScript')">
+                        Form Transcript
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('phase1.index')" :active="request()->routeIs('phase1.index')">
+                        Dean
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('phase2.index')" :active="request()->routeIs('phase2.index')">
+                        Head University
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
