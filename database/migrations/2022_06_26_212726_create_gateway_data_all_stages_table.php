@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('node_gateway_graduate_orders', function (Blueprint $table) {
+        Schema::create('gateway_data_all_stages', function (Blueprint $table) {
             $table->id();
             $table->integer('university_id')->nullable();
             $table->integer('collage_id')->nullable();
@@ -32,6 +32,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('node_gateway_graduate_orders');
+        Schema::dropIfExists('node_gateway_all_stages');
+        Schema::dropIfExists('gateway_data_all_stages');
     }
 };

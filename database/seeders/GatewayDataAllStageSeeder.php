@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Gateway;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class NodeGatewayAllStageSeeder extends Seeder
+class GatewayDataAllStageSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,6 @@ class NodeGatewayAllStageSeeder extends Seeder
      */
     public function run()
     {
-        //
+
     }
 }

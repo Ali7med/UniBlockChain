@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('master_points', function (Blueprint $table) {
+        Schema::create('masters', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('url')->nullable();
+            $table->boolean('is_me')->default(false);
             $table->timestamps();
         });
     }
@@ -29,5 +30,6 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('master_points');
+        Schema::dropIfExists('masters');
     }
 };

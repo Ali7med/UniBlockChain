@@ -3,9 +3,12 @@
 use App\Http\Controllers\BlockChainController;
 use App\Http\Controllers\EcdsaController;
 use App\Http\Controllers\FinalSheetController;
+use App\Http\Controllers\GatewayController;
+use App\Http\Controllers\MasterController;
 use App\Models\FinalSheet;
-use App\Models\MasterGatewayPoint;
-use App\Models\MasterPoint;
+use App\Models\Gateway;
+use App\Models\Master;
+use App\Models\GatewayDataAllStage;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
@@ -46,111 +49,85 @@ Route::prefix('/Algorithm')->group(function () {
 
 Route::get('/index1', [BlockChainController::class,'index1']);
 
-Route::get('to/master/send/request' ,  function(){
+// Route::get('to/master/send/request' ,  function(){
 
-    // $responses = Http::pool(fn (Pool $pool) => [
-    //     $pool->as('index1')->timeout(1)->async()->get('http://127.0.0.1:8000/index1')->then(
-    //         fn (Response|TransferException $result) => $this->handleResult($result)
-    //     ),
-    //     $pool->as('foo')->timeout(3)->async()->get('https://httpbin.org/delay/2')->then(
+//     // $responses = Http::pool(fn (Pool $pool) => [
+//     //     $pool->as('index1')->timeout(1)->async()->get('http://127.0.0.1:8000/index1')->then(
+//     //         fn (Response|TransferException $result) => $this->handleResult($result)
+//     //     ),
+//     //     $pool->as('foo')->timeout(3)->async()->get('https://httpbin.org/delay/2')->then(
 
-    //     ),
-    //     $pool->as('bar')->timeout(1)->async()->get('https://httpbin.org/delay/3')->then(
+//     //     ),
+//     //     $pool->as('bar')->timeout(1)->async()->get('https://httpbin.org/delay/3')->then(
 
-    //     ),
-    //     $pool->as('baz')->timeout(1)->async()->get('https://httpbin.org/delay/3')->then(
+//     //     ),
+//     //     $pool->as('baz')->timeout(1)->async()->get('https://httpbin.org/delay/3')->then(
 
-    //     ),
-    //     $pool->as('google')->timeout(1)->async()->get('https://google.com')->then(
+//     //     ),
+//     //     $pool->as('google')->timeout(1)->async()->get('https://google.com')->then(
 
-    //     ),
-    // ]);
-    $promises_master = [];
-    $masters=MasterPoint::all();
-    foreach( $masters as $master){
-        $promises_master[] = Http::async()->get($master->url);
-    }
-    // $promises = [];
-    // $promises[] = Http::async()->get('http://localhost/UniBlockChain/public/index1');
-    // $promises[] = Http::async()->timeout(2)->get('https://httpbin.org/delay/5');
+//     //     ),
+//     // ]);
+//     $promises_master = [];
+//     $masters=Master::all();
+//     foreach( $masters as $master){
+//         $promises_master[] = Http::async()->get($master->url);
+//     }
+//     // $promises = [];
+//     // $promises[] = Http::async()->get('http://localhost/UniBlockChain/public/index1');
+//     // $promises[] = Http::async()->timeout(2)->get('https://httpbin.org/delay/5');
 
-    // Wait for the responses to be received
-    //$responses = Utils::unwrap($promises);
-    $responses_master = Utils::unwrap($promises_master);
+//     // Wait for the responses to be received
+//     //$responses = Utils::unwrap($promises);
+//     $responses_master = Utils::unwrap($promises_master);
 
-    //;
-    //$responses['bar']->successful();
+//     //;
+//     //$responses['bar']->successful();
 
-    //dd($responses[1]->body());
-    dd($responses_master);
- return true ;
-}
-);
+//     //dd($responses[1]->body());
+//     dd($responses_master);
+//  return true ;
+// }
+// );
 
 
+// the Master Regain
 
-// here I'm master
-Route::prefix('to/master/')->group(function () {
-    Route::get('masters/request' ,  function(Request $request){
+// receive request from any ware to store
+Route::prefix('master/')->group(function () {
+    Route::get('from/node/store' ,[MasterController::class,'store_send_master']);
+    Route::get('from/master/store' , [MasterController::class,'store_local']);
+
+});
+
+// receive request from any ware to store
+Route::prefix('master/')->group(function () {
+    Route::get('from/node/store' ,  function(Request $request){
         // first step send to all master nodes
         $promises_master = [];
-        $masters=MasterPoint::all();
+        $masters=Master::all();
         foreach ($masters as $master) {
-            $promises_master[] = Http::async()->get($master->url+"/to/master/node/request",[
+            $promises_master[] = Http::async()->get($master->url+"/master/node/store",[
                 'id' => $request->id
             ]);
         }
         $responses_master = Utils::unwrap($promises_master);
-        // dd($responses_master);
-        // return true ;
+        //return true ;
+    }
+    );
 
-        // //second step send to all local node (gateways)
-        // $promises_node = [];
-        // $points=MasterGatewayPoint::all();
-        // foreach ($points as $point) {
-        //     $promises_node[] = Http::async()->get($point->url);
-        // }
-        // $responses_node = Utils::unwrap($promises_node);
-        // dd($responses_node);
-        return true ;
-    }
-    );
-    Route::get('nodes/request' ,  function(Request $request){
-        //first step send to all local node (gateways)
-        $promises_node = [];
-        $points=MasterGatewayPoint::all();
-        foreach ($points as $point) {
-            $promises_node[] = Http::async()->get($point->url);
-        }
-        $responses_node = Utils::unwrap($promises_node);
-        //dd($responses_node);
-        return true ;
-    }
-    );
 });
 
 
-// here I'm node
-Route::prefix('to/node/')->group(function () {
 
+// the gateway node Regain
+Route::prefix('gateway/')->group(function () {
+    // receive request from master to check the hash
+    Route::get('check/request' , [GatewayController::class,'index']);
+    // receive request from master to store the hash
+    Route::get('store/request' , [GatewayController::class,'store']);
     // receive request from local university and foreword it to master to publish it to all masters
-    Route::get('master/request' ,  function(Request $request){
-        $promises_node  = Http::async()->get(env('MASTER_URL')+"to/master/send/request" , [
-            'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
-            'section_id' => $request->section_id,
-            'stage_id' => $request->stage_id,
-            'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
-        ]);
-        return true ;
-    }
-    );
-    Route::get('store/request' ,  function(Request $request){
-
-        return true ;
-    }
-    );
+    Route::get('master/request' ,[GatewayController::class,'send_master']);
 });
 
 require __DIR__.'/auth.php';

@@ -27,8 +27,8 @@ class DatabaseSeeder extends Seeder
             YearTypeSeeder::class,
             StudyTypeSeeder::class,
             FinalSheetSeeder::class,
-            MasterPointSeeder::class,
-            MasterGatewayPointSeeder::class
+            MasterSeeder::class,
+            GatewaySeeder::class
         ]);
         Student::factory(100)->create();
     }

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\MasterPoint;
+use App\Models\Master;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class MasterPointSeeder extends Seeder
+class MasterSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,12 +15,13 @@ class MasterPointSeeder extends Seeder
      */
     public function run()
     {
-        MasterPoint::create([
-            'name' => 'Karbala Master',
-            'url' => 'http://localhost/karbalaUniGatway/public/api/'
+        Master::create([
+            'name' => 'Karbala_Master',
+            'url' => 'http://localhost/karbalaUniGatway/public/api/',
+            'is_me'=>true
         ]);
-        MasterPoint::create([
-            'name' => 'Baghdad Master',
+        Master::create([
+            'name' => 'Baghdad_Master',
             'url' => 'http://localhost/alsalamUniGatway/public/api/'
         ]);
     }

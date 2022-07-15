@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class NodeGatewayGraduateDocumentSeeder extends Seeder
+class GatewayDataGraduateDocumentSeeder extends Seeder
 {
     /**
      * Run the database seeds.

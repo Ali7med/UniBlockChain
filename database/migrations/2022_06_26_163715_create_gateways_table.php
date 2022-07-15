@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('node_gateway_all_stages', function (Blueprint $table) {
+        Schema::create('gateways', function (Blueprint $table) {
             $table->id();
-            $table->integer('university_id')->nullable();
-            $table->integer('collage_id')->nullable();
-            $table->integer('section_id')->nullable();
-            $table->integer('stage_id')->nullable();
-            $table->text('hash')->nullable();
-            $table->text('en_hash')->nullable();
+            $table->string('name');
+            $table->string('url')->nullable();
+            $table->integer('weight')->default(0);
             $table->timestamps();
         });
     }
@@ -32,6 +29,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('node_gateway_all_stages');
+        Schema::dropIfExists('master_gateway_points');
+        Schema::dropIfExists('gateways');
     }
 };

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NodeGatewayGraduateOrder extends Model
+class Master extends Model
 {
     use HasFactory;
 }
