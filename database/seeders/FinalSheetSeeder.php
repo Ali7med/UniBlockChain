@@ -17,6 +17,7 @@ class FinalSheetSeeder extends Seeder
     {
 
         FinalSheet::create([
+            'university_id'=> '1',
             'student_id'=> '1',
             'college_id'=> '1',
             'stage_id'=> '1',
@@ -29,6 +30,7 @@ class FinalSheetSeeder extends Seeder
             'number_date_graduation_degree' => '3241 2021-01-23',
         ]);
         FinalSheet::create([
+            'university_id'=> '1',
             'student_id'=> '1',
             'college_id'=> '1',
             'stage_id'=> '2',
@@ -41,6 +43,7 @@ class FinalSheetSeeder extends Seeder
             'number_date_graduation_degree' => '5124 2022-03-23',
         ]);
         FinalSheet::create([
+            'university_id'=> '1',
             'student_id'=> '2',
             'college_id'=> '1',
             'stage_id'=> '2',

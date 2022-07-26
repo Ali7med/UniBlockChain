@@ -7,8 +7,10 @@ use App\Models\Master;
 use App\Models\GatewayDataAllStage;
 use App\Models\GatewayDataGraduateDocument;
 use App\Models\GatewayDataGraduateOrder;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GatewayController extends Controller
 {
@@ -60,18 +62,22 @@ class GatewayController extends Controller
         return true ;
     }
 
-    public function send_master(Request $request)
-    {
-        $promises_node  = Http::async()->get(env('MASTER_URL')+"to/master/send/request" , [
-            'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
-            'section_id' => $request->section_id,
-            'stage_id' => $request->stage_id,
-            'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
-        ]);
-        return true ;
-    }
+    // public function send_master(Request $request)
+    // {
+    //     $path=env('MASTER_URL')."from/gateway/store";
+    //     Log::alert('+ (send_master) Master : '.$path);
+    //     $promises_node  = Http::async()->get($path , [
+    //         'university_id' => $request->university_id,
+    //         'collage_id' => $request->collage_id,
+    //         'section_id' => $request->section_id,
+    //         'stage_id' => $request->stage_id,
+    //         'hash' => $request->hash,
+    //         'en_hash' => $request->en_hash,
+    //     ]);
+    //     $promises_node->wait();
+    //     Log::alert('- (send_master) Master ');
+    //     return true ;
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -89,11 +95,42 @@ class GatewayController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    public function store_abbar(Request $request){
+        //dd(1);
+        Log::alert('+++ 2');
+        //send master
+        $path=env('MASTER_URL')."from/gateway/store";
+        $promises_node  = Http::acceptJson()->async()->get($path , [
+            'university_id' => $request->university_id,
+            'collage_id' => $request->collage_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'hash' => $request->hash,
+            'en_hash' => $request->en_hash,
+        ])->then(function ($response){
+            Log::alert('finsh store_abbar ');
+            Log::alert($response);
+            //dd($response->body());
+            return true;
+        });
+        $promises_node->wait();
+        return true ;
+
+
+        //$this->send_master($request);
+       //return $this->store($request);
+    }
     public function store(Request $request)
     {
+        // Log::alert($request);
+        // return response()->json(
+        //     $request,200
+        // );
+        // Log::alert($request);
         // must to check the type of hash to store it
         if($request->type=="all_stages"){
-            GatewayDataAllStage::create([
+           $doc= GatewayDataAllStage::create([
                 'university_id' => $request->university_id,
                 'collage_id' => $request->collage_id,
                 'section_id' => $request->section_id,
@@ -102,7 +139,7 @@ class GatewayController extends Controller
                 'en_hash' => $request->en_hash,
             ]);
         }elseif($request->type=="graduate"){
-            GatewayDataGraduateOrder::create([
+            $doc=  GatewayDataGraduateOrder::create([
                 'university_id' => $request->university_id,
                 'collage_id' => $request->collage_id,
                 'section_id' => $request->section_id,
@@ -111,7 +148,7 @@ class GatewayController extends Controller
                 'en_hash' => $request->en_hash,
             ]);
         }elseif($request->type=="document"){
-            GatewayDataGraduateDocument::create([
+            $doc=GatewayDataGraduateDocument::create([
                 'university_id' => $request->university_id,
                 'collage_id' => $request->collage_id,
                 'section_id' => $request->section_id,
@@ -120,7 +157,10 @@ class GatewayController extends Controller
                 'en_hash' => $request->en_hash,
             ]);
         }
-        return true ;
+        return response()->json(
+            $doc,200
+        );
+        return $doc->id ;
     }
 
     /**

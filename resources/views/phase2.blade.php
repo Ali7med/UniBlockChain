@@ -82,7 +82,8 @@
                                                     style="color:red;font-size:25px" class="fa-solid fa-folder-xmark"
                                                     @endif
                                                     ></i>
-                                                </th>                                            </tr>
+                                                </th>
+                                            </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
@@ -91,7 +92,7 @@
                                     </table>
                                   </p>
                                     @if ($Item->hash2==$Item->hash && $Item->hash2==$Item->phase1->hash)
-                                        <a href="{{ route('phase2.store',['id'=>$Item->id]) }}" class="btn btn-primary">Approve !!!</a>
+                                        <a href="{{ route('send_gateway',['id'=>$Item->id]) }}" class="btn btn-primary">Send To Gate Way !!!</a>
                                     @else
                                         <a href="#" class="btn btn-outline-danger">Not Approved !!!</a>
                                     @endif

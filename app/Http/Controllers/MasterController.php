@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Promise\Utils;
+use Illuminate\Support\Facades\Log;
+
 class MasterController extends Controller
 {
     /**
@@ -51,7 +53,7 @@ class MasterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store_local(Request $request)
+    public function store_local_gateways(Request $request)
     {
          //first step send to all local node (gateways)
          $promises_node = [];
@@ -63,16 +65,24 @@ class MasterController extends Controller
          //dd($responses_node);
          return true ;
     }
+    // receive request from any ware to store
     public function store_send_master(Request $request)
     {
        // first step send to all master nodes(without me)
+       Log::alert('+++ 3');
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
+       $path='';
        foreach ($masters as $master) {
-           $promises_master[] = Http::async()->get($master->url."/master/from/master/store",$request);
+        Log::alert('+++ '.$master->url);
+        $path=$master->url."/master/from/master/store";
+        Log::alert('(store_send_master) Master : '.$path);
+        $promises_master[] = Http::async($path)->get($path ,$request);
        }
        $responses_master = Utils::unwrap($promises_master);
-       //return true ;
+       // second step send to local gateways
+       $this->store_local_gateways($request);
+       return true;
     }
     public function check_send_master(Request $request)
     {
@@ -80,12 +90,21 @@ class MasterController extends Controller
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
        foreach ($masters as $master) {
-           $promises_master[] = Http::async()->get($master->url."/master/from/master/store",$request);
+           $promises_master[] = Http::async()->get($master->url."/master/from/master/check",$request);
        }
        $responses_master = Utils::unwrap($promises_master);
-       //return true ;
+    //second step calculate
+       $SumTrues=0;
+        foreach ($responses_master as $master) {
+            $SumTrues+= $master->results;
+        }
+
+       //second step check all local gateways
+        $SumLocals=$this->check_local_gateways($request);
+        $SumTrues+=$SumLocals;
+        return $SumTrues;
     }
-    public function check_local(Request $request)
+    public function check_local_gateways(Request $request)
     {
          //first step send to all local node (gateways)
          $promises_node = [];
@@ -94,7 +113,7 @@ class MasterController extends Controller
              $promises_node[] = Http::async()->get($point->url."/gateway/check/request",$request);
          }
          $responses_node = Utils::unwrap($promises_node);
-         // make sumation the
+         // make summation the
          $SumRation=0;
         foreach ($responses_node as $point) {
             if($point->result==true){

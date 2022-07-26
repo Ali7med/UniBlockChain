@@ -6,8 +6,11 @@ use App\Models\FinalSheet;
 use App\Models\Phase1;
 use App\Models\Phase2;
 use App\Models\Student;
+use GuzzleHttp\Promise\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class BlockChainController extends Controller
 {
@@ -85,6 +88,10 @@ class BlockChainController extends Controller
             $resultHash= $this->makeHash($single);
             // 2
             Phase1::create([
+                'university_id' => $single->university_id ,
+                'collage_id' => $single->collage_id ,
+                'section_id' => $single->section_id ,
+                'stage_id' => $single->stage_id ,
                 'student_id' => $single->student_id ,
                 'user_id' => auth()->user()->id,
                 'operation_id' => $single->id,
@@ -118,6 +125,10 @@ class BlockChainController extends Controller
             $resultHash= $this->makeHash($single->operation);
             // 2
             Phase2::create([
+                'university_id' => $single->university_id ,
+                'collage_id' => $single->collage_id ,
+                'section_id' => $single->section_id ,
+                'stage_id' => $single->stage_id ,
                 'student_id' => $single->student_id ,
                 'user_id' => auth()->user()->id,
                 'operation_id' => $single->operation_id,
@@ -132,8 +143,49 @@ class BlockChainController extends Controller
 
     }
 
+public function send_gateway(Request $request)
+    {
 
+        if($request->id==null || !isset($request->id))
+        return redirect()->route('phase2.index');
+        $res= $this->send_request($request->id);
+        if($res){
+            $result="Process Complete";
+        }else{
+            $result="Process Not Complete !!!!";
+        }
 
+        // must to send to gateway
+         return view('gateway',['result'=>$result]);
+
+    }
+
+    public function send_request($id)
+    {
+
+        $single=Phase2::find($id);
+        if($single){
+            //dd($single);
+            $single->sended=true;
+            $single->save();
+            $single->type="graduate";
+            $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
+            // $res=Http::acceptJson()->get($path,$single);
+            // dd($res->Body());
+            Log::alert('+++ 1');
+
+            $promises_node  = Http::async()->acceptJson()->get($path,$single)->then(function ($response){
+                dd($response->body());
+                return true;
+            });
+            //$responses_node = Utils::unwrap($promises_node);
+             $promises_node->wait();
+            //dd($promises_node->status());
+
+        }else{
+           return false;
+        }
+    }
 
     public function makeHash($single)
     {

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('final_sheets', function (Blueprint $table) {
             $table->id();
+            $table->foreignId("university_id");
             $table->foreignId("student_id");
             $table->foreignId("college_id");
             $table->foreignId("stage_id");

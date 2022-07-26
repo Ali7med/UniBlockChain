@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Hash;
 class Phase2 extends Model
 {
     use HasFactory;
-    protected  $guarded=[];
+    protected $guarded=[];
+    //protected $appends = ['type'];
+
     public function student()
     {
         return $this->belongsTo(Student::class);

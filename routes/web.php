@@ -40,6 +40,7 @@ Route::prefix('/Algorithm')->group(function () {
     Route::get('/Phase2', [BlockChainController::class,'index_phase2'])->middleware(['auth'])->name('phase2.index');
     Route::get('/Phase1/store', [BlockChainController::class,'store_phase1'])->middleware(['auth'])->name('phase1.store');
     Route::get('/Phase2/store', [BlockChainController::class,'store_phase2'])->middleware(['auth'])->name('phase2.store');
+    Route::get('/send/gateway', [BlockChainController::class,'send_gateway'])->middleware(['auth'])->name('send_gateway');
     Route::get('/form', [BlockChainController::class, 'form'])->name('form');
     Route::get('/formTranScript', [BlockChainController::class, 'formTranScript'])->name('formTranScript');
 });
@@ -94,40 +95,6 @@ Route::get('/index1', [BlockChainController::class,'index1']);
 // the Master Regain
 
 // receive request from any ware to store
-Route::prefix('master/')->group(function () {
-    Route::get('from/node/store' ,[MasterController::class,'store_send_master']);
-    Route::get('from/master/store' , [MasterController::class,'store_local']);
 
-});
-
-// receive request from any ware to store
-Route::prefix('master/')->group(function () {
-    Route::get('from/node/store' ,  function(Request $request){
-        // first step send to all master nodes
-        $promises_master = [];
-        $masters=Master::all();
-        foreach ($masters as $master) {
-            $promises_master[] = Http::async()->get($master->url+"/master/node/store",[
-                'id' => $request->id
-            ]);
-        }
-        $responses_master = Utils::unwrap($promises_master);
-        //return true ;
-    }
-    );
-
-});
-
-
-
-// the gateway node Regain
-Route::prefix('gateway/')->group(function () {
-    // receive request from master to check the hash
-    Route::get('check/request' , [GatewayController::class,'index']);
-    // receive request from master to store the hash
-    Route::get('store/request' , [GatewayController::class,'store']);
-    // receive request from local university and foreword it to master to publish it to all masters
-    Route::get('master/request' ,[GatewayController::class,'send_master']);
-});
 
 require __DIR__.'/auth.php';
