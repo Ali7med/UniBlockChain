@@ -184,6 +184,9 @@ class GatewayController extends Controller
         // );
         // Log::alert($request);
         // must to check the type of hash to store it
+        Log::alert("In Gatway store");
+        print_r($request);
+        $doc="None";
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
                 'university_id' => $request->university_id,
@@ -213,9 +216,13 @@ class GatewayController extends Controller
             ]);
         }
         return response()->json(
-            $doc,200
+            [
+                'send' => true,
+                'data' => $doc,
+            ]
+            ,200
         );
-        return $doc->id ;
+       
     }
 
     /**
