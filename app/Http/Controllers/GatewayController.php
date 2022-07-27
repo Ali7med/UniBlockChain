@@ -7,10 +7,13 @@ use App\Models\Master;
 use App\Models\GatewayDataAllStage;
 use App\Models\GatewayDataGraduateDocument;
 use App\Models\GatewayDataGraduateOrder;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 class GatewayController extends Controller
 {
@@ -96,11 +99,26 @@ class GatewayController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store_abbar(Request $request){
+    public function store_abbar_request(Request $request){
         //dd(1);
         Log::alert('+++ 2');
+        $data= [
+            'university_id' => $request->university_id,
+            'collage_id' => $request->collage_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'hash' => $request->hash,
+            'en_hash' => $request->en_hash,
+        ];
+
         //send master
         $path=env('MASTER_URL')."from/gateway/store";
+        Log::alert($path);
+        $client = new Client([
+            'base_uri' => env('GATEWAY_URL'),
+            'timeout'  => 60.0,
+        ]);
+ 
         $promises_node  = Http::acceptJson()->async()->get($path , [
             'university_id' => $request->university_id,
             'collage_id' => $request->collage_id,
@@ -109,13 +127,24 @@ class GatewayController extends Controller
             'hash' => $request->hash,
             'en_hash' => $request->en_hash,
         ])->then(function ($response){
-            Log::alert('finsh store_abbar ');
-            Log::alert($response);
+            Log::alert('successfully store_abbar_request ');
+            Log::alert($response->result);
             //dd($response->body());
-            return true;
+            return response()->json(
+                [
+                    'send' => true,
+                    'result' => "send successfully"
+                ],200
+            );
         });
         $promises_node->wait();
-        return true ;
+
+        return response()->json(
+            [
+                'send' => false,
+                'result' => "send Not successfully"
+            ],500
+        );
 
 
         //$this->send_master($request);

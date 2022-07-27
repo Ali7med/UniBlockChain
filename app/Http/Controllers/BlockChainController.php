@@ -7,11 +7,15 @@ use App\Models\Phase1;
 use App\Models\Phase2;
 use App\Models\Student;
 use GuzzleHttp\Promise\Utils;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
+use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\RequestException;
 class BlockChainController extends Controller
 {
     public function form()
@@ -148,22 +152,8 @@ public function send_gateway(Request $request)
 
         if($request->id==null || !isset($request->id))
         return redirect()->route('phase2.index');
-        $res= $this->send_request($request->id);
-        if($res){
-            $result="Process Complete";
-        }else{
-            $result="Process Not Complete !!!!";
-        }
 
-        // must to send to gateway
-         return view('gateway',['result'=>$result]);
-
-    }
-
-    public function send_request($id)
-    {
-
-        $single=Phase2::find($id);
+        $single=Phase2::find($request->id);
         if($single){
             //dd($single);
             $single->sended=true;
@@ -173,19 +163,88 @@ public function send_gateway(Request $request)
             // $res=Http::acceptJson()->get($path,$single);
             // dd($res->Body());
             Log::alert('+++ 1');
+            $client = new Client([
+                'base_uri' => env('GATEWAY_URL'),
+                'timeout'  => 60.0,
+            ]);
+            //$response = $client->get($path);
 
-            $promises_node  = Http::async()->acceptJson()->get($path,$single)->then(function ($response){
-                dd($response->body());
-                return true;
-            });
+            $promise = $client->getAsync($path,['query' => ['single' =>$single ]]);
+            $promise->then(
+                function (ResponseInterface $res) {
+                    Log::alert("successfully");
+                    return response()->json([
+                        'result' => 'send successfully'
+                       ],
+                       200
+                    );
+                },
+                function (RequestException $e) {
+                    Log::error("Not successfully");
+                    return response()->json([
+                        'result' => 'send not successfully',
+                        'message' => $e->getMessage()
+                       ],500);
+                    // dd( $e->getMessage() . "\n");
+                    // echo $e->getRequest()->getMethod();
+                }
+            );
+            $promise->wait();
+//              dd(0);
+//             $promises_node  = Http::acceptJson()->getAsync($path,$single)->then(function ($response){
+//                 dd($response->body());
+//                 return true;
+//             });
             //$responses_node = Utils::unwrap($promises_node);
-             $promises_node->wait();
+            //$promises_node->wait();
             //dd($promises_node->status());
 
         }else{
-           return false;
+           return response()->json([
+            'result' => 'send not successfully'
+           ],500);
         }
+
+
+
+        // $res= $this->send_request($request->id);
+        // if($res){
+        //     $result="Process Complete";
+        // }else{
+        //     $result="Process Not Complete !!!!";
+        // }
+
+        // // must to send to gateway
+        //  return view('gateway',['result'=>$result]);
+
     }
+
+    // public function send_request($id)
+    // {
+
+    //     $single=Phase2::find($id);
+    //     if($single){
+    //         //dd($single);
+    //         $single->sended=true;
+    //         $single->save();
+    //         $single->type="graduate";
+    //         $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
+    //         // $res=Http::acceptJson()->get($path,$single);
+    //         // dd($res->Body());
+    //         Log::alert('+++ 1');
+
+    //         $promises_node  = Http::async()->acceptJson()->get($path,$single)->then(function ($response){
+    //             dd($response->body());
+    //             return true;
+    //         });
+    //         //$responses_node = Utils::unwrap($promises_node);
+    //          $promises_node->wait();
+    //         //dd($promises_node->status());
+
+    //     }else{
+    //        return false;
+    //     }
+    // }
 
     public function makeHash($single)
     {

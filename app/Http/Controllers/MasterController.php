@@ -53,7 +53,7 @@ class MasterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store_local_gateways(Request $request)
+    public function from_master_store(Request $request)
     {
          //first step send to all local node (gateways)
          $promises_node = [];
@@ -66,10 +66,20 @@ class MasterController extends Controller
          return true ;
     }
     // receive request from any ware to store
-    public function store_send_master(Request $request)
+    public function from_gateway_store(Request $request)
     {
        // first step send to all master nodes(without me)
        Log::alert('+++ 3');
+       return response()->json(
+        [
+            'send' => true,
+            'result' => "send from_gateway_store successfully"
+        ],200
+    );
+
+
+
+
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
        $path='';
@@ -81,7 +91,7 @@ class MasterController extends Controller
        }
        $responses_master = Utils::unwrap($promises_master);
        // second step send to local gateways
-       $this->store_local_gateways($request);
+       $this->from_master_store($request);
        return true;
     }
     public function check_send_master(Request $request)
@@ -100,11 +110,11 @@ class MasterController extends Controller
         }
 
        //second step check all local gateways
-        $SumLocals=$this->check_local_gateways($request);
+        $SumLocals=$this->from_master_check($request);
         $SumTrues+=$SumLocals;
         return $SumTrues;
     }
-    public function check_local_gateways(Request $request)
+    public function from_master_check(Request $request)
     {
          //first step send to all local node (gateways)
          $promises_node = [];
