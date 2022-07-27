@@ -29,6 +29,8 @@ Route::prefix('master/')->group(function () {
 });
 
 
+
+
 // the gateway node Regain
 Route::prefix('gateway/')->group(function () {
     // receive request from master to check the hash
