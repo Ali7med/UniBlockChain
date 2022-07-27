@@ -102,6 +102,7 @@ class GatewayController extends Controller
     public function store_abbar_request(Request $request){
         //dd(1);
         Log::alert('+++ 2');
+        Log::alert('GATEWAY');
         $data= [
             'university_id' => $request->university_id,
             'collage_id' => $request->collage_id,
@@ -112,29 +113,54 @@ class GatewayController extends Controller
         ];
 
         //send master
-        $path=env('MASTER_URL')."from/gateway/store";
+        $path=env('MASTER_URL')."master/from/gateway/store";
         Log::alert($path);
         $client = new Client([
             'base_uri' => env('GATEWAY_URL'),
             'timeout'  => 60.0,
         ]);
- 
-        $promises_node  = Http::acceptJson()->async()->get($path , [
-            'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
-            'section_id' => $request->section_id,
-            'stage_id' => $request->stage_id,
-            'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
-        ])->then(function ($response){
+
+
+        // $promise = $client->getAsync($path,['query' => ['single' =>$data ]]);
+        //     $promise->then(
+        //         function (ResponseInterface $res) {
+        //             Log::alert("successfully");
+        //             return response()->json([
+        //                 'result' => 'send successfully'
+        //                ],
+        //                200
+        //             );
+        //         },
+        //         function (RequestException $e) {
+        //             Log::error("Not successfully");
+        //             return response()->json([
+        //                 'result' => 'send not successfully',
+        //                 'message' => $e->getMessage()
+        //                ],500);
+        //             // dd( $e->getMessage() . "\n");
+        //             // echo $e->getRequest()->getMethod();
+        //         }
+        //     );
+        //     $promise->wait();
+
+        // return response()->json(
+        //     [
+        //         'send' => false,
+        //         'result' => "send Not successfully store_abbar_request ccc"
+        //     ],500
+        // );
+
+        $promises_node  = Http::acceptJson()->async()->get($path ,$data)
+            ->then(function ($response){
             Log::alert('successfully store_abbar_request ');
-            Log::alert($response->result);
-            //dd($response->body());
+            //Log::alert($response);
+            dd($response->body());
             return response()->json(
                 [
                     'send' => true,
-                    'result' => "send successfully"
-                ],200
+                    'result' => "send successfully store_abbar_request"
+                ]
+                ,200
             );
         });
         $promises_node->wait();
@@ -142,7 +168,7 @@ class GatewayController extends Controller
         return response()->json(
             [
                 'send' => false,
-                'result' => "send Not successfully"
+                'result' => "send Not successfully store_abbar_request"
             ],500
         );
 

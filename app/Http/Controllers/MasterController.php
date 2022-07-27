@@ -55,27 +55,35 @@ class MasterController extends Controller
      */
     public function from_master_store(Request $request)
     {
+        Log::alert('+++ 4');
          //first step send to all local node (gateways)
          $promises_node = [];
          $points=Gateway::all();
          foreach ($points as $point) {
-             $promises_node[] = Http::async()->get($point->url."/gateway/store/request",$request);
+            if($point->url!="") $promises_node[] = Http::async()->get($point->url."/gateway/store/request",$request);
          }
          $responses_node = Utils::unwrap($promises_node);
          //dd($responses_node);
-         return true ;
+         return response()->json(
+            [
+                'send' => true,
+                'result' => "send successfully"
+            ]
+            ,200
+        );
     }
     // receive request from any ware to store
     public function from_gateway_store(Request $request)
     {
        // first step send to all master nodes(without me)
        Log::alert('+++ 3');
-       return response()->json(
-        [
-            'send' => true,
-            'result' => "send from_gateway_store successfully"
-        ],200
-    );
+       Log::alert('IN Master');
+    //    return response()->json(
+    //     [
+    //         'send' => true,
+    //         'result' => "send from_gateway_store successfully"
+    //     ],200
+    // );
 
 
 
@@ -85,7 +93,7 @@ class MasterController extends Controller
        $path='';
        foreach ($masters as $master) {
         Log::alert('+++ '.$master->url);
-        $path=$master->url."/master/from/master/store";
+        $path=$master->url."master/from/master/store";
         Log::alert('(store_send_master) Master : '.$path);
         $promises_master[] = Http::async($path)->get($path ,$request);
        }

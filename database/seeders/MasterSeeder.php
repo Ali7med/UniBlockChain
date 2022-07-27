@@ -17,12 +17,13 @@ class MasterSeeder extends Seeder
     {
         Master::create([
             'name' => 'Karbala_Master',
-            'url' => 'http://localhost/karbalaUniGatway/public/api/',
+            'url' => 'http://localhost/UniBlockChain/public/api/',
             'is_me'=>true
         ]);
         Master::create([
             'name' => 'Baghdad_Master',
-            'url' => 'http://localhost/alsalamUniGatway/public/api/'
+            'url' => 'http://localhost/UniBlockChain2/public/api/',
+            'is_me'=>false
         ]);
     }
 }

@@ -17,40 +17,40 @@ class GatewaySeeder extends Seeder
     {
         Gateway::create([
             'name' => 'Karbala_University',
-            'url' => 'http://localhost/karbalaUniGatway/public/api/',
-            'weight'=>33
+            'url' => 'http://localhost/UniBlockChain/public/api/',
+            'weight'=>55
         ]);
         Gateway::create([
             'name' => 'Al-Salam_University',
-            'url' => 'http://localhost/alsalamUniGatway/public/api/',
+            'url' => '',
             'weight'=>11
         ]);
 
-        Gateway::create([
-            'name' => 'AlSafwa_University',
-            'url' =>'',
-            'weight'=>11
-        ]);
-        Gateway::create([
-            'name' => 'Warith_University',
-            'url' =>'',
-            'weight'=>14
-        ]);
-        Gateway::create([
-            'name' => 'Rafdeen_University',
-            'url' =>'',
-            'weight'=>13
-        ]);
-        Gateway::create([
-            'name' => 'AlZahra_University',
-            'url' =>'',
-            'weight'=>18
-        ]);
-        Gateway::create([
-            'name' => 'AlZahra_University',
-            'url' =>'',
-            'weight'=>21
-        ]);
+        // Gateway::create([
+        //     'name' => 'AlSafwa_University',
+        //     'url' =>'',
+        //     'weight'=>11
+        // ]);
+        // Gateway::create([
+        //     'name' => 'Warith_University',
+        //     'url' =>'',
+        //     'weight'=>14
+        // ]);
+        // Gateway::create([
+        //     'name' => 'Rafdeen_University',
+        //     'url' =>'',
+        //     'weight'=>13
+        // ]);
+        // Gateway::create([
+        //     'name' => 'AlZahra_University',
+        //     'url' =>'',
+        //     'weight'=>18
+        // ]);
+        // Gateway::create([
+        //     'name' => 'AlZahra_University',
+        //     'url' =>'',
+        //     'weight'=>21
+        // ]);
 
     }
 }
