@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 Route::prefix('master/')->group(function () {
     Route::get('from/gateway/store' ,[MasterController::class,'from_gateway_store']);
     Route::get('from/master/store' , [MasterController::class,'from_master_store']);
