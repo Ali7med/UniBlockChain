@@ -170,6 +170,7 @@ public function send_gateway(Request $request)
             //     //Log::alert($response);
             // });
             //$promises_node->wait();
+            return view('final');
         }else{
            return response()->json([
             'result' => 'send not successfully in send_gateway'
