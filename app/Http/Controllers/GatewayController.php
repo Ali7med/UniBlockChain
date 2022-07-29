@@ -179,14 +179,9 @@ class GatewayController extends Controller
     }
     public function store(Request $request)
     {
-        // Log::alert($request);
-        // return response()->json(
-        //     $request,200
-        // );
-        Log::alert($request);
         // must to check the type of hash to store it
-        Log::alert("In Gatway store");
-        $doc="None";
+        Log::alert("In Gateway store");
+        $doc=null;
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
                 'university_id' => $request->university_id,
@@ -214,6 +209,8 @@ class GatewayController extends Controller
                 'hash' => $request->hash,
                 'en_hash' => $request->en_hash,
             ]);
+        }else{
+            Log::error("In Gateway store the type not any type known");
         }
         return response()->json(
             [

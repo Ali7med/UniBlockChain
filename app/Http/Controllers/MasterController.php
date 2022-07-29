@@ -80,18 +80,15 @@ class MasterController extends Controller
     public function from_gateway_store(Request $request)
     {
        // first step send to all master nodes(without me)
+       Log::alert('IN Master');
        Log::alert('--> from_gateway_store');
        Log::alert('+++ 3');
-       Log::alert('IN Master');
     //    return response()->json(
     //     [
     //         'send' => true,
     //         'result' => "send from_gateway_store successfully"
     //     ],200
     // );
-
-
-
 
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
