@@ -143,8 +143,16 @@ class GatewayController extends Controller
     {
         // must to check the type of hash to store it
         Log::alert("In Gateway Local store");
+        $data= [
+            'university_id' => $request->university_id,
+            'college_id' => $request->college_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'hash' => $request->hash,
+            'en_hash' => $request->en_hash,
+        ];
+        Log::info(json_encode($data));
         $doc=null;
-        Log::info(json_encode($request));
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
                 'university_id' => $request->university_id,

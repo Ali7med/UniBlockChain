@@ -57,6 +57,7 @@ class MasterController extends Controller
     {
         //first step send to all local node (gateways)
         Log::alert('+++ 4 --> from_master_store');
+        Log::alert('My Master :' . env('MASTER_NAME') . " URL:".env('MASTER_URL'));
         $data= [
             'university_id' => $request->university_id,
             'college_id' => $request->college_id,
