@@ -149,8 +149,7 @@ class BlockChainController extends Controller
 
 public function send_gateway(Request $request)
     {
-        Log::alert("--> send_gateway");
-        Log::alert("--> request->id :  $request->id");
+        Log::alert("+++ 1 --> send_gateway");
         if($request->id==null || !isset($request->id))
         {
             Log::error(" error in send_gateway ");
@@ -162,7 +161,6 @@ public function send_gateway(Request $request)
             $single->save();
             $single->type="graduate";
             $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
-            Log::alert('+++ 1');
             $promises_node  =null;
             $promises_node  = Http::acceptJson()->post($path ,$single);
             //     ->then(function ($response){

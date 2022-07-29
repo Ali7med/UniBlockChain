@@ -55,16 +55,25 @@ class MasterController extends Controller
      */
     public function from_master_store(Request $request)
     {
-        Log::alert('--> from_master_store');
-        Log::alert('+++ 4');
-         //first step send to all local node (gateways)
+        //first step send to all local node (gateways)
+        Log::alert('+++ 4 --> from_master_store');
+        $data= [
+            'university_id' => $request->university_id,
+            'college_id' => $request->college_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'hash' => $request->hash,
+            'en_hash' => $request->en_hash,
+        ];
+        Log::info(json_encode($data));
+
          $promises_node = [];
          $gateways=Gateway::all();
          Log::alert('::::START SEND Gateways');
          foreach ($gateways as $gateway) {
             if($gateway->url!="") {
                 Log::alert('+++ must to send to Gateway '.$gateway->name . " URL:" .$gateway->url);
-                $promises_node[] = Http::async()->get($gateway->url."gateway/store/request",$request);
+                $promises_node[] = Http::acceptJson()->async()->get($gateway->url."gateway/store/request",$data);
 
             }else{
                 Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
@@ -72,7 +81,6 @@ class MasterController extends Controller
             }
          $responses_node = Utils::unwrap($promises_node);
          Log::alert('::::END SEND Gateways');
-         //dd($responses_node);
          return response()->json(
             [
                 'send' => true,
@@ -85,15 +93,7 @@ class MasterController extends Controller
     public function from_gateway_store(Request $request)
     {
        // first step send to all master nodes(without me)
-       Log::alert('IN Master');
-       Log::alert('--> from_gateway_store');
-       Log::alert('+++ 3');
-    //    return response()->json(
-    //     [
-    //         'send' => true,
-    //         'result' => "send from_gateway_store successfully"
-    //     ],200
-    // );
+       Log::alert('+++ 3 IN Master --> from_gateway_store');
 
         $data= [
             'university_id' => $request->university_id,
@@ -103,16 +103,17 @@ class MasterController extends Controller
             'hash' => $request->hash,
             'en_hash' => $request->en_hash,
        ];
+       Log::info(json_encode($data));
+
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
        $path='';
        Log::alert('::::START SEND Master');
-
        foreach ($masters as $master) {
         if($master->url!=""){
             Log::alert('+++ must to send to master '.$master->name . " URL:" .$master->url);
             $path=$master->url."master/from/master/store";
-            $promises_master[] = Http::async($path)->post($path ,$data);
+            $promises_master[] = Http::acceptJson()->async($path)->post($path ,$data);
         }else{
             Log::alert('+++  master '.$master->name . " NOT HAVE URL URL:");
         }

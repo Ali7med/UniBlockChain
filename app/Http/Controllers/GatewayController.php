@@ -100,9 +100,7 @@ class GatewayController extends Controller
      */
 
     public function store_abbar_request(Request $request){
-        Log::alert('in GATEWAY');
-        Log::alert('--> store_abbar_request');
-        Log::alert('+++ 2');
+        Log::alert('+++ 2 in GATEWAY --> store_abbar_request');
         $data= [
             'university_id' => $request->university_id,
             'college_id' => $request->college_id,
