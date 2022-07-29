@@ -55,6 +55,7 @@ class MasterController extends Controller
      */
     public function from_master_store(Request $request)
     {
+        Log::alert('--> from_master_store');
         Log::alert('+++ 4');
          //first step send to all local node (gateways)
          $promises_node = [];
@@ -76,6 +77,7 @@ class MasterController extends Controller
     public function from_gateway_store(Request $request)
     {
        // first step send to all master nodes(without me)
+       Log::alert('--> from_gateway_store');
        Log::alert('+++ 3');
        Log::alert('IN Master');
     //    return response()->json(

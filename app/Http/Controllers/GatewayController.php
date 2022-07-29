@@ -101,6 +101,7 @@ class GatewayController extends Controller
 
     public function store_abbar_request(Request $request){
         //dd(1);
+        Log::alert('--> store_abbar_request');
         Log::alert('+++ 2');
         Log::alert('GATEWAY');
         $data= [
@@ -168,7 +169,7 @@ class GatewayController extends Controller
         return response()->json(
             [
                 'send' => false,
-                'result' => "send Not successfully store_abbar_request"
+                'result' => "send Not successfully in  store_abbar_request"
             ],500
         );
 
@@ -182,10 +183,9 @@ class GatewayController extends Controller
         // return response()->json(
         //     $request,200
         // );
-        // Log::alert($request);
+        Log::alert($request);
         // must to check the type of hash to store it
         Log::alert("In Gatway store");
-        print_r($request);
         $doc="None";
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
@@ -222,7 +222,7 @@ class GatewayController extends Controller
             ]
             ,200
         );
-       
+
     }
 
     /**

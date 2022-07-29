@@ -149,7 +149,8 @@ class BlockChainController extends Controller
 
 public function send_gateway(Request $request)
     {
-
+        Log::alert("--> send_gateway");
+        Log::alert("--> request->id :  $request->id");
         if($request->id==null || !isset($request->id))
         return redirect()->route('phase2.index');
 
@@ -174,15 +175,16 @@ public function send_gateway(Request $request)
                 function (ResponseInterface $res) {
                     Log::alert("successfully");
                     return response()->json([
-                        'result' => 'send successfully'
+                        'result' => 'send successfully',
+                        'message' => $res->getBody()
                        ],
                        200
                     );
                 },
                 function (RequestException $e) {
-                    Log::error("Not successfully");
+                    Log::error('Not successfully in send_gateway ::'.$e->getMessage());
                     return response()->json([
-                        'result' => 'send not successfully',
+                        'result' => 'send not successfully in send_gateway',
                         'message' => $e->getMessage()
                        ],500);
                     // dd( $e->getMessage() . "\n");
@@ -201,7 +203,7 @@ public function send_gateway(Request $request)
 
         }else{
            return response()->json([
-            'result' => 'send not successfully'
+            'result' => 'send not successfully in send_gateway'
            ],500);
         }
 
