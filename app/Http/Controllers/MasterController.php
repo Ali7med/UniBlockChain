@@ -60,10 +60,13 @@ class MasterController extends Controller
          //first step send to all local node (gateways)
          $promises_node = [];
          $gateways=Gateway::all();
+         Log::alert('::::START SEND Gateways');
          foreach ($gateways as $gateway) {
+            Log::alert('+++ must to send to Gateway '.$gateway->name . " URL:" .$gateway->url);
             if($gateway->url!="") $promises_node[] = Http::async()->get($gateway->url."gateway/store/request",$request);
          }
          $responses_node = Utils::unwrap($promises_node);
+         Log::alert('::::END SEND Gateways');
          //dd($responses_node);
          return response()->json(
             [
@@ -104,13 +107,20 @@ class MasterController extends Controller
             Log::alert('+++  master '.$master->name . " NOT HAVE URL URL:");
         }
        }
-
-       Log::alert('::::END SEND Master');
-
        $responses_master = Utils::unwrap($promises_master);
+       Log::alert('::::END SEND Master');
        // second step send to local gateways
-       $this->from_master_store($request);
-       return true;
+    //    Log::alert('second step send to local gateways');
+    //    $this->from_master_store($request);
+    //    return true;
+
+    return response()->json(
+        [
+            'send' => true,
+            'result' => "send successfully to masters"
+        ]
+        ,200
+    );
     }
     public function check_send_master(Request $request)
     {
