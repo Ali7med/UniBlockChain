@@ -106,6 +106,7 @@ class GatewayController extends Controller
             'college_id' => $request->college_id,
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
+            'type' => $request->type,
             'hash' => $request->hash,
             'en_hash' => $request->en_hash,
         ];
@@ -143,6 +144,7 @@ class GatewayController extends Controller
     {
         // must to check the type of hash to store it
         Log::alert("In Gateway Local store");
+        Log::info(json_encode($request));
         $data= [
             'university_id' => $request->university_id,
             'college_id' => $request->college_id,

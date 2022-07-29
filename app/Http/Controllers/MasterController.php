@@ -63,6 +63,7 @@ class MasterController extends Controller
             'college_id' => $request->college_id,
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
+            'type' => $request->type,
             'hash' => $request->hash,
             'en_hash' => $request->en_hash,
         ];
@@ -102,6 +103,7 @@ class MasterController extends Controller
             'college_id' => $request->college_id,
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
+            'type' => $request->type,
             'hash' => $request->hash,
             'en_hash' => $request->en_hash,
        ];
