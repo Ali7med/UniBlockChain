@@ -100,10 +100,9 @@ class GatewayController extends Controller
      */
 
     public function store_abbar_request(Request $request){
-        //dd(1);
+        Log::alert('in GATEWAY');
         Log::alert('--> store_abbar_request');
         Log::alert('+++ 2');
-        Log::alert('GATEWAY');
         $data= [
             'university_id' => $request->university_id,
             'collage_id' => $request->collage_id,
@@ -155,7 +154,6 @@ class GatewayController extends Controller
             ->then(function ($response){
             Log::alert('successfully store_abbar_request ');
             //Log::alert($response);
-            dd($response->body());
             return response()->json(
                 [
                     'send' => true,
@@ -165,7 +163,8 @@ class GatewayController extends Controller
             );
         });
         $promises_node->wait();
-
+// must to send save information to local gateway
+        $this->store($request);
         return response()->json(
             [
                 'send' => false,
@@ -180,7 +179,7 @@ class GatewayController extends Controller
     public function store(Request $request)
     {
         // must to check the type of hash to store it
-        Log::alert("In Gateway store");
+        Log::alert("In Gateway Local store");
         $doc=null;
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([

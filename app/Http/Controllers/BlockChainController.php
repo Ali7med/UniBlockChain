@@ -182,7 +182,7 @@ public function send_gateway(Request $request)
                     );
                 },
                 function (RequestException $e) {
-                    Log::error('Not successfully in send_gateway ::'.$e->getMessage());
+                    Log::error("Not successfully in send_gateway [".$path."]::".$e->getMessage());
                     return response()->json([
                         'result' => 'send not successfully in send_gateway',
                         'message' => $e->getMessage()
