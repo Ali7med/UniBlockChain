@@ -72,8 +72,9 @@ class MasterController extends Controller
          Log::alert('::::START SEND Gateways');
          foreach ($gateways as $gateway) {
             if($gateway->url!="") {
-                Log::alert('+++ must to send to Gateway '.$gateway->name . " URL:" .$gateway->url);
-                $promises_node[] = Http::acceptJson()->async()->get($gateway->url."gateway/store/request",$data);
+                $path=$gateway->url."gateway/store/request";
+                Log::alert('+++ must to send to Gateway '.$gateway->name . " URL:" .$path);
+                $promises_node[] = Http::acceptJson()->async()->get($path,$data);
 
             }else{
                 Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
