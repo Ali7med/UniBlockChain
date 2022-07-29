@@ -152,72 +152,30 @@ public function send_gateway(Request $request)
         Log::alert("--> send_gateway");
         Log::alert("--> request->id :  $request->id");
         if($request->id==null || !isset($request->id))
-        return redirect()->route('phase2.index');
+        {
+            Log::error(" error in send_gateway ");
+        }
 
         $single=Phase2::find($request->id);
         if($single){
-            //dd($single);
             $single->sended=true;
             $single->save();
             $single->type="graduate";
             $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
-            // $res=Http::acceptJson()->get($path,$single);
-            // dd($res->Body());
             Log::alert('+++ 1');
-            $client = new Client([
-                'base_uri' => env('GATEWAY_URL'),
-                'timeout'  => 60.0,
-            ]);
-            //$response = $client->get($path);
-
-            $promise = $client->getAsync($path,['query' => ['single' =>$single ]]);
-            $promise->then(
-                function (ResponseInterface $res) {
-                    Log::alert("successfully");
-                    return response()->json([
-                        'result' => 'send successfully',
-                        'message' => $res->getBody()
-                       ],
-                       200
-                    );
-                },
-                function (RequestException $e) {
-                    Log::error("Not successfully in send_gateway [".$path."]::".$e->getMessage());
-                    return response()->json([
-                        'result' => 'send not successfully in send_gateway',
-                        'message' => $e->getMessage()
-                       ],500);
-                    // dd( $e->getMessage() . "\n");
-                    // echo $e->getRequest()->getMethod();
-                }
-            );
-            $promise->wait();
-//              dd(0);
-//             $promises_node  = Http::acceptJson()->getAsync($path,$single)->then(function ($response){
-//                 dd($response->body());
-//                 return true;
-//             });
-            //$responses_node = Utils::unwrap($promises_node);
-            //$promises_node->wait();
-            //dd($promises_node->status());
-
+            $promises_node  =null;
+            $promises_node  = Http::acceptJson()->async()->get($path ,$request)
+                ->then(function ($response){
+                Log::alert('successfully store_abbar_request ');
+                //Log::alert($response);
+            });
+            $promises_node->wait();
         }else{
            return response()->json([
             'result' => 'send not successfully in send_gateway'
            ],500);
         }
 
-
-
-        // $res= $this->send_request($request->id);
-        // if($res){
-        //     $result="Process Complete";
-        // }else{
-        //     $result="Process Not Complete !!!!";
-        // }
-
-        // // must to send to gateway
-        //  return view('gateway',['result'=>$result]);
 
     }
 

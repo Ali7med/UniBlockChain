@@ -114,57 +114,22 @@ class GatewayController extends Controller
 
         //send master
         $path=env('MASTER_URL')."master/from/gateway/store";
-        Log::alert($path);
-        $client = new Client([
-            'base_uri' => env('GATEWAY_URL'),
-            'timeout'  => 60.0,
-        ]);
-
-
-        // $promise = $client->getAsync($path,['query' => ['single' =>$data ]]);
-        //     $promise->then(
-        //         function (ResponseInterface $res) {
-        //             Log::alert("successfully");
-        //             return response()->json([
-        //                 'result' => 'send successfully'
-        //                ],
-        //                200
-        //             );
-        //         },
-        //         function (RequestException $e) {
-        //             Log::error("Not successfully");
-        //             return response()->json([
-        //                 'result' => 'send not successfully',
-        //                 'message' => $e->getMessage()
-        //                ],500);
-        //             // dd( $e->getMessage() . "\n");
-        //             // echo $e->getRequest()->getMethod();
-        //         }
-        //     );
-        //     $promise->wait();
-
-        // return response()->json(
-        //     [
-        //         'send' => false,
-        //         'result' => "send Not successfully store_abbar_request ccc"
-        //     ],500
-        // );
-
+        $promises_node  =null;
         $promises_node  = Http::acceptJson()->async()->get($path ,$data)
             ->then(function ($response){
             Log::alert('successfully store_abbar_request ');
             //Log::alert($response);
-            return response()->json(
-                [
-                    'send' => true,
-                    'result' => "send successfully store_abbar_request"
-                ]
-                ,200
-            );
         });
         $promises_node->wait();
 // must to send save information to local gateway
         $this->store($request);
+        return response()->json(
+            [
+                'send' => true,
+                'result' => "send successfully store_abbar_request"
+            ]
+            ,200
+        );
         return response()->json(
             [
                 'send' => false,
