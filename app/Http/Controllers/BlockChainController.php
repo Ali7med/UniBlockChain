@@ -155,7 +155,14 @@ public function send_gateway(Request $request)
         {
             Log::error(" error in send_gateway ");
         }
-
+        $data=[
+                'university_id' => $request->university_id,
+                'collage_id' => $request->collage_id,
+                'section_id' => $request->section_id,
+                'stage_id' => $request->stage_id,
+                'hash' => $request->hash,
+                'en_hash' => $request->en_hash,
+        ];
         $single=Phase2::find($request->id);
         if($single){
             $single->sended=true;
@@ -164,7 +171,7 @@ public function send_gateway(Request $request)
             $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
             Log::alert('+++ 1');
             $promises_node  =null;
-            $promises_node  = Http::acceptJson()->async()->get($path ,$request)
+            $promises_node  = Http::acceptJson()->async()->post($path ,$data)
                 ->then(function ($response){
                 Log::alert('successfully store_abbar_request ');
                 //Log::alert($response);

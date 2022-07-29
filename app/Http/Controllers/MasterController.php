@@ -95,6 +95,14 @@ class MasterController extends Controller
     //     ],200
     // );
 
+        $data= [
+            'university_id' => $request->university_id,
+            'collage_id' => $request->collage_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'hash' => $request->hash,
+            'en_hash' => $request->en_hash,
+       ];
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
        $path='';
@@ -104,7 +112,7 @@ class MasterController extends Controller
         if($master->url!=""){
             Log::alert('+++ must to send to master '.$master->name . " URL:" .$master->url);
             $path=$master->url."master/from/master/store";
-            $promises_master[] = Http::async($path)->get($path ,$request);
+            $promises_master[] = Http::async($path)->post($path ,$data);
         }else{
             Log::alert('+++  master '.$master->name . " NOT HAVE URL URL:");
         }

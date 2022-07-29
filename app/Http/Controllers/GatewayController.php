@@ -115,7 +115,7 @@ class GatewayController extends Controller
         //send master
         $path=env('MASTER_URL')."master/from/gateway/store";
         $promises_node  =null;
-        $promises_node  = Http::acceptJson()->async()->get($path ,$data)
+        $promises_node  = Http::acceptJson()->async()->post($path ,$data)
             ->then(function ($response){
             Log::alert('successfully store_abbar_request ');
             //Log::alert($response);
@@ -146,6 +146,7 @@ class GatewayController extends Controller
         // must to check the type of hash to store it
         Log::alert("In Gateway Local store");
         $doc=null;
+        Log::info(json_encode($request));
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
                 'university_id' => $request->university_id,
