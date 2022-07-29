@@ -111,14 +111,14 @@ class MasterController extends Controller
        Log::alert('::::START SEND Master');
        foreach ($masters as $master) {
         if($master->url!=""){
-            Log::alert('+++ must to send to master '.$master->name . " URL:" .$master->url);
             $path=$master->url."master/from/master/store";
-            $promises_master[] = Http::acceptJson()->async($path)->post($path ,$data);
+            Log::alert('+++ must to send to master '.$master->name . " URL:" .$path);
+            $promises_master[] = Http::acceptJson()->post($path ,$data);
         }else{
             Log::alert('+++  master '.$master->name . " NOT HAVE URL URL:");
         }
        }
-       $responses_master = Utils::unwrap($promises_master);
+       //$responses_master = Utils::unwrap($promises_master);
        Log::alert('::::END SEND Master');
        // second step send to local gateways
     //    Log::alert('second step send to local gateways');

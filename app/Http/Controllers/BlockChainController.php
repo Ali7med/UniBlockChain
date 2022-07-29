@@ -160,6 +160,8 @@ public function send_gateway(Request $request)
             $single->sended=true;
             $single->save();
             $single->type="graduate";
+            Log::info(json_encode($single));
+
             $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
             $promises_node  =null;
             $promises_node  = Http::acceptJson()->post($path ,$single);
