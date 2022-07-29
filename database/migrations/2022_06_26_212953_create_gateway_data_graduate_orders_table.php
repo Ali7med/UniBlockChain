@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('gateway_data_graduate_orders', function (Blueprint $table) {
             $table->id();
             $table->integer('university_id')->nullable();
-            $table->integer('collage_id')->nullable();
+            $table->integer('college_id')->nullable();
             $table->integer('section_id')->nullable();
             $table->integer('stage_id')->nullable();
             $table->text('hash')->nullable();

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId("university_id");
             $table->foreignId("student_id");
             $table->foreignId("college_id");
+            $table->foreignId("section_id");
             $table->foreignId("stage_id");
             $table->foreignId("year_id");
             $table->foreignId("user_id");

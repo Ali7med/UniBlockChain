@@ -32,7 +32,7 @@ class GatewayController extends Controller
         if($request->type=="all_stages"){
            $result= GatewayDataAllStage::where([
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
@@ -43,7 +43,7 @@ class GatewayController extends Controller
         }elseif($request->type=="graduate"){
             $result= GatewayDataGraduateOrder::where([
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
@@ -54,7 +54,7 @@ class GatewayController extends Controller
         }elseif($request->type=="document"){
             $result= GatewayDataGraduateDocument::where([
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
@@ -71,7 +71,7 @@ class GatewayController extends Controller
     //     Log::alert('+ (send_master) Master : '.$path);
     //     $promises_node  = Http::async()->get($path , [
     //         'university_id' => $request->university_id,
-    //         'collage_id' => $request->collage_id,
+    //         'college_id' => $request->college_id,
     //         'section_id' => $request->section_id,
     //         'stage_id' => $request->stage_id,
     //         'hash' => $request->hash,
@@ -105,13 +105,13 @@ class GatewayController extends Controller
         Log::alert('+++ 2');
         $data= [
             'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
+            'college_id' => $request->college_id,
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
             'hash' => $request->hash,
             'en_hash' => $request->en_hash,
         ];
-
+        Log::info(json_encode($data));
         //send master
         $path=env('MASTER_URL')."master/from/gateway/store";
         $promises_node  =null;
@@ -150,7 +150,7 @@ class GatewayController extends Controller
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
@@ -159,7 +159,7 @@ class GatewayController extends Controller
         }elseif($request->type=="graduate"){
             $doc=  GatewayDataGraduateOrder::create([
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
@@ -168,7 +168,7 @@ class GatewayController extends Controller
         }elseif($request->type=="document"){
             $doc=GatewayDataGraduateDocument::create([
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,

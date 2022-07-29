@@ -93,7 +93,7 @@ class BlockChainController extends Controller
             // 2
             Phase1::create([
                 'university_id' => $single->university_id ,
-                'collage_id' => $single->collage_id ,
+                'college_id' => $single->college_id ,
                 'section_id' => $single->section_id ,
                 'stage_id' => $single->stage_id ,
                 'student_id' => $single->student_id ,
@@ -130,7 +130,7 @@ class BlockChainController extends Controller
             // 2
             Phase2::create([
                 'university_id' => $single->university_id ,
-                'collage_id' => $single->collage_id ,
+                'college_id' => $single->college_id ,
                 'section_id' => $single->section_id ,
                 'stage_id' => $single->stage_id ,
                 'student_id' => $single->student_id ,
@@ -155,14 +155,7 @@ public function send_gateway(Request $request)
         {
             Log::error(" error in send_gateway ");
         }
-        $data=[
-                'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
-                'section_id' => $request->section_id,
-                'stage_id' => $request->stage_id,
-                'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
-        ];
+
         $single=Phase2::find($request->id);
         if($single){
             $single->sended=true;
@@ -171,12 +164,12 @@ public function send_gateway(Request $request)
             $path=env('GATEWAY_URL')."gateway/store/abbar/request";//dd($path);
             Log::alert('+++ 1');
             $promises_node  =null;
-            $promises_node  = Http::acceptJson()->async()->post($path ,$data)
-                ->then(function ($response){
-                Log::alert('successfully store_abbar_request ');
-                //Log::alert($response);
-            });
-            $promises_node->wait();
+            $promises_node  = Http::acceptJson()->post($path ,$single);
+            //     ->then(function ($response){
+            //     Log::alert('successfully store_abbar_request ');
+            //     //Log::alert($response);
+            // });
+            //$promises_node->wait();
         }else{
            return response()->json([
             'result' => 'send not successfully in send_gateway'

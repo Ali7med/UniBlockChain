@@ -97,7 +97,7 @@ class MasterController extends Controller
 
         $data= [
             'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
+            'college_id' => $request->college_id,
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
             'hash' => $request->hash,
