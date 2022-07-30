@@ -171,7 +171,7 @@ class GatewayController extends Controller
                 'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id
-            ])->orederBy('id','desc')->first();
+            ])->orderBy('id','desc')->first();
             if($result) $prev_hash=$result->hash;
 
             $doc=  GatewayDataGraduateOrder::create([
