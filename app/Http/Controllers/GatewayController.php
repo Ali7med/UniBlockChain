@@ -36,18 +36,19 @@ class GatewayController extends Controller
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ])->get();
             if($result) return $response;
 
         }elseif($request->type=="graduate"){
+
             $result= GatewayDataGraduateOrder::where([
                 'university_id' => $request->university_id,
                 'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ])->get();
             if($result) return $response;
 
@@ -58,7 +59,7 @@ class GatewayController extends Controller
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ])->get();
             if($result) return $response;
         }
@@ -75,7 +76,7 @@ class GatewayController extends Controller
     //         'section_id' => $request->section_id,
     //         'stage_id' => $request->stage_id,
     //         'hash' => $request->hash,
-    //         'en_hash' => $request->en_hash,
+    //         'prev_hash' => $request->prev_hash,
     //     ]);
     //     $promises_node->wait();
     //     Log::alert('- (send_master) Master ');
@@ -108,7 +109,7 @@ class GatewayController extends Controller
             'stage_id' => $request->stage_id,
             'type' => $request->type,
             'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
+            'prev_hash' => $request->prev_hash,
         ];
         Log::info(json_encode($data));
         //send master
@@ -150,7 +151,7 @@ class GatewayController extends Controller
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
             'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
+            'prev_hash' => $request->prev_hash,
         ];
         Log::info(json_encode($data));
         $doc=null;
@@ -161,16 +162,25 @@ class GatewayController extends Controller
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ]);
         }elseif($request->type=="graduate"){
+            $prev_hash="";
+            $result= GatewayDataGraduateOrder::where([
+                'university_id' => $request->university_id,
+                'college_id' => $request->college_id,
+                'section_id' => $request->section_id,
+                'stage_id' => $request->stage_id
+            ])->orederBy('id','desc')->first();
+            if($result) $prev_hash=$result->hash;
+
             $doc=  GatewayDataGraduateOrder::create([
                 'university_id' => $request->university_id,
                 'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $prev_hash,
             ]);
         }elseif($request->type=="document"){
             $doc=GatewayDataGraduateDocument::create([
@@ -179,7 +189,7 @@ class GatewayController extends Controller
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ]);
         }else{
             Log::error("In Gateway store the type not any type known");

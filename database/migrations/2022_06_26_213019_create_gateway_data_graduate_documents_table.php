@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('section_id')->nullable();
             $table->integer('stage_id')->nullable();
             $table->text('hash')->nullable();
-            $table->text('en_hash')->nullable();
+            $table->text('prev_hash')->nullable();
             $table->timestamps();
         });
     }

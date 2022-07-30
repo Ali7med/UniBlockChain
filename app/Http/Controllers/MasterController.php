@@ -65,7 +65,7 @@ class MasterController extends Controller
             'stage_id' => $request->stage_id,
             'type' => $request->type,
             'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
+            'prev_hash' => $request->prev_hash,
         ];
         Log::info(json_encode($data));
 
@@ -105,7 +105,7 @@ class MasterController extends Controller
             'stage_id' => $request->stage_id,
             'type' => $request->type,
             'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
+            'prev_hash' => $request->prev_hash,
        ];
        Log::info(json_encode($data));
 

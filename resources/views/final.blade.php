@@ -17,7 +17,7 @@
                         Congratulation !!! Data Sended Successfully <br/>
                         <i style="color:orange;font-size:25px"
                         class="fa-solid fa-lightbulb-exclamation"></i>
-                         Note : Date Waiting to be conformiting...
+                         Note : Data Waiting to be conformiting...
                     </h2>
 
                     <hr>
