@@ -16,40 +16,35 @@ class GatewaySeeder extends Seeder
     public function run()
     {
         Gateway::create([
-            'name' => 'Karbala_University',
-            'url' => 'http://localhost/karbalaUniGatway/public/api/',
-            'weight'=>33
+            'name' => 'Baghdad_University',
+            'url' => 'http://192.168.0.240/karbalaUniGatway/public/api/',
+            'weight'=>51
         ]);
         Gateway::create([
-            'name' => 'Al-Salam_University',
-            'url' => 'http://localhost/alsalamUniGatway/public/api/',
-            'weight'=>11
+            'name' => 'Mustansiriyah_University',
+            'url' => '',
+            'weight'=>20
         ]);
 
         Gateway::create([
-            'name' => 'AlSafwa_University',
+            'name' => 'Technology_University',
             'url' =>'',
-            'weight'=>11
+            'weight'=>20
         ]);
         Gateway::create([
-            'name' => 'Warith_University',
+            'name' => 'Al-Mammon_University',
             'url' =>'',
-            'weight'=>14
+            'weight'=>5
         ]);
         Gateway::create([
             'name' => 'Rafdeen_University',
             'url' =>'',
-            'weight'=>13
+            'weight'=>2
         ]);
         Gateway::create([
-            'name' => 'AlZahra_University',
+            'name' => 'Dijlah_University',
             'url' =>'',
-            'weight'=>18
-        ]);
-        Gateway::create([
-            'name' => 'AlZahra_University',
-            'url' =>'',
-            'weight'=>21
+            'weight'=>2
         ]);
 
     }
