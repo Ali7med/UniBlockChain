@@ -22,11 +22,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::prefix('master/')->group(function () {
-    Route::get('from/gateway/store' ,[MasterController::class,'from_gateway_store']);
-    Route::get('from/master/store' , [MasterController::class,'from_master_store']);
+    Route::post('from/gateway/store' ,[MasterController::class,'from_gateway_store']);
+    Route::post('from/master/store' , [MasterController::class,'from_master_store']);
     // from portal to check the information
     Route::get('from/master/check' , [MasterController::class,'check_local_gateways']);
 });
+
+
 
 
 // the gateway node Regain
@@ -36,7 +38,7 @@ Route::prefix('gateway/')->group(function () {
     // receive request from master to store the hash
     Route::get('store/request' , [GatewayController::class,'store']);
     // receive request from master to store the hash
-    Route::get('store/abbar/request' , [GatewayController::class,'store_abbar_request']);
+    Route::post('store/abbar/request' , [GatewayController::class,'store_abbar_request']);
     // receive request from local university and foreword it to master to publish it to all masters
     Route::get('local/request' ,[GatewayController::class,'send_master']);
 

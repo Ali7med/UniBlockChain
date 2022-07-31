@@ -15,12 +15,15 @@ return new class extends Migration
     {
         Schema::create('gateway_data_all_stages', function (Blueprint $table) {
             $table->id();
+            $table->integer('doc_id')->nullable();
+            $table->integer('student_id')->nullable();
             $table->integer('university_id')->nullable();
-            $table->integer('collage_id')->nullable();
+            $table->integer('college_id')->nullable();
             $table->integer('section_id')->nullable();
             $table->integer('stage_id')->nullable();
             $table->text('hash')->nullable();
-            $table->text('en_hash')->nullable();
+            $table->text('prev_hash')->nullable();
+            $table->text('chain_hash')->nullable();
             $table->timestamps();
         });
     }

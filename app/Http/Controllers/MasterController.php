@@ -55,44 +55,91 @@ class MasterController extends Controller
      */
     public function from_master_store(Request $request)
     {
-         //first step send to all local node (gateways)
+        //first step send to all local node (gateways)
+        Log::alert('+++ 4 --> from_master_store');
+        Log::alert('My Master :' . env('MASTER_NAME') . " URL:".env('MASTER_URL'));
+        $data= [
+            'doc_id' => $request->doc_id ,
+            'student_id' => $request->student_id ,
+            'university_id' => $request->university_id,
+            'college_id' => $request->college_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'type' => $request->type,
+            'hash' => $request->hash,
+            'prev_hash' => $request->prev_hash,
+        ];
+        Log::info(json_encode($data));
+
          $promises_node = [];
-         $points=Gateway::all();
-         foreach ($points as $point) {
-             $promises_node[] = Http::async()->get($point->url."/gateway/store/request",$request);
-         }
+         $gateways=Gateway::all();
+         Log::alert('::::START SEND Gateways');
+         foreach ($gateways as $gateway) {
+            if($gateway->url!="") {
+                $path=$gateway->url."gateway/store/request";
+                Log::alert('+++ must to send to Gateway '.$gateway->name . " URL:" .$path);
+                $promises_node[] = Http::acceptJson()->async()->get($path,$data);
+
+            }else{
+                Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
+            }
+            }
          $responses_node = Utils::unwrap($promises_node);
-         //dd($responses_node);
-         return true ;
+         Log::alert('::::END SEND Gateways');
+         return response()->json(
+            [
+                'send' => true,
+                'result' => "send successfully"
+            ]
+            ,200
+        );
     }
     // receive request from any ware to store
     public function from_gateway_store(Request $request)
     {
        // first step send to all master nodes(without me)
-       Log::alert('+++ 3');
-       return response()->json(
-        [
-            'send' => true,
-            'result' => "send from_gateway_store successfully"
-        ],200
-    );
+       Log::alert('+++ 3 IN Master --> from_gateway_store');
 
-
-
+        $data= [
+            'doc_id' => $request->doc_id ,
+            'student_id' => $request->student_id ,
+            'university_id' => $request->university_id,
+            'college_id' => $request->college_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'type' => $request->type,
+            'hash' => $request->hash,
+            'prev_hash' => $request->prev_hash,
+       ];
+       Log::info(json_encode($data));
 
        $promises_master = [];
        $masters=Master::where(['is_me'=>false])->get();
        $path='';
+       Log::alert('::::START SEND Master');
        foreach ($masters as $master) {
-        Log::alert('+++ '.$master->url);
-        $path=$master->url."/master/from/master/store";
-        Log::alert('(store_send_master) Master : '.$path);
-        $promises_master[] = Http::async($path)->get($path ,$request);
+        if($master->url!=""){
+            $path=$master->url."master/from/master/store";
+            Log::alert('+++ must to send to master '.$master->name . " URL:" .$path);
+            $promises_master[] = Http::acceptJson()->post($path ,$data);
+        }else{
+            Log::alert('+++  master '.$master->name . " NOT HAVE URL URL:");
+        }
        }
-       $responses_master = Utils::unwrap($promises_master);
+       //$responses_master = Utils::unwrap($promises_master);
+       Log::alert('::::END SEND Master');
        // second step send to local gateways
-       $this->from_master_store($request);
-       return true;
+    //    Log::alert('second step send to local gateways');
+    //    $this->from_master_store($request);
+    //    return true;
+
+    return response()->json(
+        [
+            'send' => true,
+            'result' => "send successfully to masters"
+        ]
+        ,200
+    );
     }
     public function check_send_master(Request $request)
     {

@@ -31,34 +31,41 @@ class GatewayController extends Controller
         // must to check the type of hash to store it
         if($request->type=="all_stages"){
            $result= GatewayDataAllStage::where([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ])->get();
             if($result) return $response;
 
         }elseif($request->type=="graduate"){
+
             $result= GatewayDataGraduateOrder::where([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ])->get();
             if($result) return $response;
 
         }elseif($request->type=="document"){
             $result= GatewayDataGraduateDocument::where([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ])->get();
             if($result) return $response;
         }
@@ -71,11 +78,11 @@ class GatewayController extends Controller
     //     Log::alert('+ (send_master) Master : '.$path);
     //     $promises_node  = Http::async()->get($path , [
     //         'university_id' => $request->university_id,
-    //         'collage_id' => $request->collage_id,
+    //         'college_id' => $request->college_id,
     //         'section_id' => $request->section_id,
     //         'stage_id' => $request->stage_id,
     //         'hash' => $request->hash,
-    //         'en_hash' => $request->en_hash,
+    //         'prev_hash' => $request->prev_hash,
     //     ]);
     //     $promises_node->wait();
     //     Log::alert('- (send_master) Master ');
@@ -100,49 +107,41 @@ class GatewayController extends Controller
      */
 
     public function store_abbar_request(Request $request){
-        //dd(1);
-        Log::alert('+++ 2');
+        Log::alert('+++ 2 in GATEWAY --> store_abbar_request');
         $data= [
+            'doc_id' => $request->doc_id ,
+            'student_id' => $request->student_id ,
             'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
+            'college_id' => $request->college_id,
             'section_id' => $request->section_id,
             'stage_id' => $request->stage_id,
+            'type' => $request->type,
             'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
+            'prev_hash' => $request->prev_hash,
         ];
-
+        Log::info(json_encode($data));
         //send master
-        $path=env('MASTER_URL')."from/gateway/store";
-        Log::alert($path);
-        $client = new Client([
-            'base_uri' => env('GATEWAY_URL'),
-            'timeout'  => 60.0,
-        ]);
- 
-        $promises_node  = Http::acceptJson()->async()->get($path , [
-            'university_id' => $request->university_id,
-            'collage_id' => $request->collage_id,
-            'section_id' => $request->section_id,
-            'stage_id' => $request->stage_id,
-            'hash' => $request->hash,
-            'en_hash' => $request->en_hash,
-        ])->then(function ($response){
+        $path=env('MASTER_URL')."master/from/gateway/store";
+        $promises_node  =null;
+        $promises_node  = Http::acceptJson()->async()->post($path ,$data)
+            ->then(function ($response){
             Log::alert('successfully store_abbar_request ');
-            Log::alert($response->result);
-            //dd($response->body());
-            return response()->json(
-                [
-                    'send' => true,
-                    'result' => "send successfully"
-                ],200
-            );
+            //Log::alert($response);
         });
         $promises_node->wait();
-
+// must to send save information to local gateway
+        $this->store($request);
+        return response()->json(
+            [
+                'send' => true,
+                'result' => "send successfully store_abbar_request"
+            ]
+            ,200
+        );
         return response()->json(
             [
                 'send' => false,
-                'result' => "send Not successfully"
+                'result' => "send Not successfully in  store_abbar_request"
             ],500
         );
 
@@ -152,44 +151,76 @@ class GatewayController extends Controller
     }
     public function store(Request $request)
     {
-        // Log::alert($request);
-        // return response()->json(
-        //     $request,200
-        // );
-        // Log::alert($request);
         // must to check the type of hash to store it
+        Log::alert("In Gateway Local store");
+        $data= [
+            'doc_id' => $request->doc_id ,
+            'student_id' => $request->student_id ,
+            'university_id' => $request->university_id,
+            'college_id' => $request->college_id,
+            'section_id' => $request->section_id,
+            'stage_id' => $request->stage_id,
+            'hash' => $request->hash,
+            'prev_hash' => $request->prev_hash,
+        ];
+        Log::info(json_encode($data));
+        $doc=null;
         if($request->type=="all_stages"){
            $doc= GatewayDataAllStage::create([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ]);
         }elseif($request->type=="graduate"){
-            $doc=  GatewayDataGraduateOrder::create([
+            $prev_hash="";
+            // get last hash to create chain
+            $result= GatewayDataGraduateOrder::where([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
+                'section_id' => $request->section_id,
+                'stage_id' => $request->stage_id
+            ])->orderBy('id','desc')->first();
+            if($result) $prev_hash=$result->hash;
+
+            $doc=  GatewayDataGraduateOrder::create([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
+                'university_id' => $request->university_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $prev_hash,
             ]);
         }elseif($request->type=="document"){
             $doc=GatewayDataGraduateDocument::create([
+                'doc_id' => $request->doc_id ,
+                'student_id' => $request->student_id ,
                 'university_id' => $request->university_id,
-                'collage_id' => $request->collage_id,
+                'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
                 'hash' => $request->hash,
-                'en_hash' => $request->en_hash,
+                'prev_hash' => $request->prev_hash,
             ]);
+        }else{
+            Log::error("In Gateway store the type not any type known");
         }
         return response()->json(
-            $doc,200
+            [
+                'send' => true,
+                'data' => $doc,
+            ]
+            ,200
         );
-        return $doc->id ;
+
     }
 
     /**
