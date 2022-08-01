@@ -78,6 +78,8 @@ class MasterController extends Controller
 
          $promises_node = [];
          $gateways=Gateway::all();
+         Log::info(json_encode($gateways));
+
          Log::alert('::::START SEND Gateways');
          foreach ($gateways as $gateway) {
             if($gateway->url!="") {
@@ -133,6 +135,27 @@ class MasterController extends Controller
        }
        //$responses_master = Utils::unwrap($promises_master);
        Log::alert('::::END SEND Master');
+
+       // second Step send to add gateways in our cluster
+       Log::alert('::::Local Gateways');
+       $promises_node = [];
+         $gateways=Gateway::where('name','!=',$request->gateway)->get();
+         Log::info(json_encode($gateways));
+
+         Log::alert('::::START SEND Gateways');
+         foreach ($gateways as $gateway) {
+            if($gateway->url!="") {
+                $path=$gateway->url."gateway/store/request";
+                Log::alert('+++ must to send to Gateway '.$gateway->name . " URL:" .$path);
+                $promises_node[] = Http::acceptJson()->async()->get($path,$data);
+
+            }else{
+                Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
+            }
+            }
+         $responses_node = Utils::unwrap($promises_node);
+
+         Log::alert('::::END SEND Local Gateways');
        // second step send to local gateways
     //    Log::alert('second step send to local gateways');
     //    $this->from_master_store($request);
