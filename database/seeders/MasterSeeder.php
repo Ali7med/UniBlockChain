@@ -17,7 +17,7 @@ class MasterSeeder extends Seeder
     {
         Master::create([
             'name' => 'Karbala_Master',
-            'url' => 'http://localhost/UniBlockChain/public/api/',
+            'url' => 'http://192.168.71.136/UniBlockChain/public/api/',
             'is_me'=>true
         ]);
         Master::create([
