@@ -201,6 +201,9 @@ class MasterController extends Controller
             'type'=>"graduate"
         ];
 
+        Log::alert('------------------');
+        Log::info(json_encode($data));
+        Log::alert('------------------');
 
         //first step send to all local node (gateways)
         $promises_node = [];
@@ -243,10 +246,13 @@ class MasterController extends Controller
 
 
        Log::alert('----  SumRation '.$SumRation. " ");
+       Log::alert('+++++++++ end Valid'.$SumRation. " ");
 
-        $request->request->add(['hash' =>$hash ]);
-        dd($request);
-        return view('masterCheck');
+        //$request->request->add(['hash' =>$hash ]);
+        //dd($request);
+        $result=0;
+        if($SumRation>50) $result=1;
+        return view('validity',['result'=>$result]);
     }
     public function makeHash($single)
     {
