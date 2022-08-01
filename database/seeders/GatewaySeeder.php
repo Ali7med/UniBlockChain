@@ -21,8 +21,8 @@ class GatewaySeeder extends Seeder
             'weight'=>51
         ]);
         Gateway::create([
-            'name' => 'Mustansiriyah_University',
-            'url' => '',
+            'name' => 'Warith_University',
+            'url' => 'http://192.168.71.27/UniBlockChain/public/api/',
             'weight'=>20
         ]);
 
