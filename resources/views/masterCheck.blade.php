@@ -22,7 +22,7 @@
                         </div>
                         <div>
                             <x-label for="uni" value="University ID" />
-                            <x-input id="uni" class="block mt-1 w-full" type="text" name=""
+                            <x-input id="uni" class="block mt-1 w-full" type="text" name="university_id"
                             value="1" required autofocus />
                         </div>
                         <div>
