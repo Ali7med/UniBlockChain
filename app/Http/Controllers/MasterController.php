@@ -186,6 +186,8 @@ class MasterController extends Controller
         $hash=$this->makeHash($request);
         $data=[
             'doc_id' =>$request->doc_id ,
+            'university_id' => $request->university_id,
+            'section_id' => $request->section_id,
             'student_id' =>$request->student_id,
             'college_id' => $request->college_id,
             'stage_id'=>$request->stage_id,
@@ -197,7 +199,6 @@ class MasterController extends Controller
             'number_date_graduation_degree'=>$request->number_date_graduation_degree,
             'hash'=>$hash,
             'type'=>"graduate"
-
         ];
 
 
