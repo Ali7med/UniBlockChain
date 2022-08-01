@@ -24,10 +24,9 @@ class GatewayController extends Controller
      */
     public function index(Request $request)
     {
-        $response=[
-            'id'=>Gateway::find(env('GATEWAY_NAME'))->id,
-            'result'=>true,
-        ];
+        Log::alert('::::in Check GateWay '.env('GATEWAY_NAME'));
+        $found=0;
+
         // must to check the type of hash to store it
         if($request->type=="all_stages"){
            $result= GatewayDataAllStage::where([
@@ -37,10 +36,9 @@ class GatewayController extends Controller
                 'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
-                'hash' => $request->hash,
-                'prev_hash' => $request->prev_hash,
-            ])->get();
-            if($result) return $response;
+                'hash' => $request->hash
+            ])->first();
+            if($result) $found=1;
 
         }elseif($request->type=="graduate"){
 
@@ -51,10 +49,9 @@ class GatewayController extends Controller
                 'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
-                'hash' => $request->hash,
-                'prev_hash' => $request->prev_hash,
-            ])->get();
-            if($result) return $response;
+                'hash' => $request->hash
+            ])->first();
+            if($result) $found=1;
 
         }elseif($request->type=="document"){
             $result= GatewayDataGraduateDocument::where([
@@ -64,12 +61,19 @@ class GatewayController extends Controller
                 'college_id' => $request->college_id,
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id,
-                'hash' => $request->hash,
-                'prev_hash' => $request->prev_hash,
-            ])->get();
-            if($result) return $response;
+                'hash' => $request->hash
+            ])->first();
+            if($result)  $found=1;
         }
-        return true ;
+        $gateway=Gateway::where('name',env('GATEWAY_NAME'))->first();
+        Log::alert('::::the result isFound:'.$found);
+
+        $response=[
+            'id'=>$gateway->id,
+            'name'=>$gateway->name,
+            'result'=>$found,
+        ];
+         return $response;
     }
 
     // public function send_master(Request $request)
@@ -188,7 +192,7 @@ class GatewayController extends Controller
                 'stage_id' => $request->stage_id
             ])->orderBy('id','desc')->first();
             if($result) $prev_hash=$result->hash;
-
+            Log::info(json_encode($result));
             $doc=  GatewayDataGraduateOrder::create([
                 'doc_id' => $request->doc_id ,
                 'student_id' => $request->student_id ,

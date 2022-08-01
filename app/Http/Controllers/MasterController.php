@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\HashTrait;
 use App\Models\Gateway;
+use App\Models\GraduationDegree;
 use App\Models\Master;
+use App\Models\StudyType;
+use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class MasterController extends Controller
 {
+    use HashTrait;
     /**
      * Display a listing of the resource.
      *
@@ -140,6 +145,99 @@ class MasterController extends Controller
         ]
         ,200
     );
+    }
+    public function master_check_view()
+    {
+        $graduations= GraduationDegree::all();
+        $studies=StudyType::all();
+        $years=Year::all();
+        return view('masterCheck',[
+            'graduations'=>$graduations,
+            'studies'=> $studies,
+            'years'=>$years
+        ]);
+    }
+    public function master_check(Request $request)
+    {
+
+        $hash=$this->makeHash($request);
+        $data=[
+            'doc_id' =>$request->doc_id ,
+            'student_id' =>$request->student_id,
+            'college_id' => $request->college_id,
+            'stage_id'=>$request->stage_id,
+            'year_id'=>$request->year_id,
+            'average'=>$request->average,
+            'avg_1st_rank'=>$request->avg_1st_rank,
+            'study_type_id'=>$request->study_type_id,
+            'graduation_degree_id'=>$request->graduation_degree_id,
+            'number_date_graduation_degree'=>$request->number_date_graduation_degree,
+            'hash'=>$hash,
+            'type'=>"graduate"
+
+        ];
+
+
+        //first step send to all local node (gateways)
+        $promises_node = [];
+         $gateways=Gateway::all();
+         Log::alert('::::START CHECK Gateways');
+         foreach ($gateways as $gateway) {
+            if($gateway->url!="") {
+                $path=$gateway->url."gateway/check/request";
+                Log::alert('+++ must to CHECK to Gateway '.$gateway->name . " URL:" .$path);
+                $promises_node[] = Http::acceptJson()->get($path,$data);
+
+            }else{
+                Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
+            }
+            }
+         //$responses_node = Utils::unwrap($promises_node);
+         Log::alert('::::END CHECK Gateways');
+
+        // make summation the
+        $SumRation=0;
+        $gateway=null;
+        Log::alert('::::START Make Sum CHECK Gateways');
+
+        Log::info(json_encode(Gateway::all()));
+
+       foreach ($promises_node as $point) {
+        $value=$point->json();
+        Log::info(json_encode($value));
+        Log::alert('Gateways '.$value['name'].' ID ' . $value['id']);
+        if($value['result']==true){
+            $gateway=Gateway::where('id',$value['id'])->first();
+            if($gateway){
+            Log::alert('+++  Gateway '.$gateway->name . " weight:" .$gateway->weight);
+            $SumRation+=$gateway->weight;
+            }
+        }else{
+        Log::critical('----  Gateway '.$value['name'] . "  NOT FOUND");
+        }
+       }
+
+
+       Log::alert('----  SumRation '.$SumRation. " ");
+
+        $request->request->add(['hash' =>$hash ]);
+        dd($request);
+        return view('masterCheck');
+    }
+    public function makeHash($single)
+    {
+        Log::info(json_encode($single));
+        $resultHash=$single->doc_id.
+        $single->student_id.
+        $single->college_id.
+        $single->stage_id.
+        $single->year_id.
+        $single->average.
+        $single->avg_1st_rank.
+        $single->study_type_id.
+        $single->graduation_degree_id.
+        $single->number_date_graduation_degree;
+        return hash('sha3-256', $resultHash); //Hash::make()
     }
     public function check_send_master(Request $request)
     {

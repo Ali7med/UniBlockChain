@@ -26,7 +26,7 @@ class FinalSheetSeeder extends Seeder
             'user_id'=>1,
             'average'=> '88',
             'avg_1st_rank' => '88',
-            'study_type_id' => '2',
+            'study_type_id' => '1',
             'graduation_degree_id' => '1',
             'number_date_graduation_degree' => '3241 2021-01-23',
         ]);

@@ -6,6 +6,7 @@ use App\Models\FinalSheet;
 use App\Models\Phase1;
 use App\Models\Phase2;
 use App\Models\Student;
+use App\Http\Traits\HashTrait ;
 use GuzzleHttp\Promise\Utils;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 class BlockChainController extends Controller
 {
+
     public function form()
     {
         $students= Student::all();
@@ -153,6 +155,7 @@ class BlockChainController extends Controller
 
 public function send_gateway(Request $request)
     {
+        Log::alert('+++++++++++++ Start Process of Send to Gate Way');
         Log::alert("+++ 1 --> send_gateway");
         if($request->id==null || !isset($request->id))
         {
@@ -173,6 +176,8 @@ public function send_gateway(Request $request)
             //     //Log::alert($response);
             // });
             //$promises_node->wait();
+            Log::alert('+++++++++++++ END Process of Send to Gate Way');
+
             return view('final');
         }else{
            return response()->json([

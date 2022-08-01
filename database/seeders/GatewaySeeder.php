@@ -16,8 +16,8 @@ class GatewaySeeder extends Seeder
     public function run()
     {
         Gateway::create([
-            'name' => 'Baghdad_University',
-            'url' => 'http://192.168.0.240/karbalaUniGatway/public/api/',
+            'name' => 'Karbala_University',
+            'url' => 'http://localhost/UniBlockChain/public/api/',
             'weight'=>51
         ]);
         Gateway::create([

@@ -44,7 +44,11 @@ Route::prefix('/Algorithm')->group(function () {
     Route::get('/form', [BlockChainController::class, 'form'])->name('form');
     Route::get('/formTranScript', [BlockChainController::class, 'formTranScript'])->name('formTranScript');
 });
+Route::prefix('/master')->group(function () {
+    Route::get('/check/view', [MasterController::class,'master_check_view'])->middleware(['auth'])->name('master.check.view');
+    Route::post('/check', [MasterController::class,'master_check'])->middleware(['auth'])->name('master.check');
 
+});
 
 
 
