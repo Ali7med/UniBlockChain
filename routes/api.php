@@ -25,7 +25,7 @@ Route::prefix('master/')->group(function () {
     Route::post('from/gateway/store' ,[MasterController::class,'from_gateway_store']);
     Route::post('from/master/store' , [MasterController::class,'from_master_store']);
     // from portal to check the information
-    Route::get('from/master/check' , [MasterController::class,'check_local_gateways']);
+    Route::get('from/master/check' , [MasterController::class,'from_master_check']);
 });
 
 

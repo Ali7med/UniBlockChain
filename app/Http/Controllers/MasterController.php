@@ -201,20 +201,25 @@ class MasterController extends Controller
             'type'=>"graduate"
         ];
 
+        Log::alert('');
+        Log::alert('');
+        Log::alert('');
+        Log::alert('');
+        Log::alert('::::START CHECK');
         Log::alert('------------------');
-        Log::info(json_encode($data));
-        Log::alert('------------------');
+        Log::info("Data : ".json_encode($data));
 
         //first step send to all local node (gateways)
         $promises_node = [];
-         $gateways=Gateway::all();
-         Log::alert('::::START CHECK Gateways');
+        $gateways=Gateway::all();
+        Log::alert('1 - START CHECK Gateways');
+
+        Log::alert('------------------');
          foreach ($gateways as $gateway) {
             if($gateway->url!="") {
                 $path=$gateway->url."gateway/check/request";
                 Log::alert('+++ must to CHECK to Gateway '.$gateway->name . " URL:" .$path);
                 $promises_node[] = Http::acceptJson()->get($path,$data);
-
             }else{
                 Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
             }
@@ -222,13 +227,27 @@ class MasterController extends Controller
          //$responses_node = Utils::unwrap($promises_node);
          Log::alert('::::END CHECK Gateways');
 
+         $Master_node = [];
+         $masters=Master::all();
+         Log::alert('2 - START CHECK Masters');
+         Log::alert('------------------');
+          foreach ($masters as $master) {
+             if($master->url!="") {
+                 $path=$master->url."master/from/master/check";
+                 Log::alert('+++ must to CHECK to master '.$master->name . " URL:" .$path);
+                 $Master_node[] = Http::acceptJson()->get($path,$data);
+             }else{
+                 Log::alert('+++ master '.$master->name . " Don't have URL");
+             }
+             }
+          //$responses_node = Utils::unwrap($Master_node);
+          Log::alert('::::END CHECK master');
         // make summation the
-        $SumRation=0;
+        $SumGateways=0;
+        $SumMasters=0;
         $gateway=null;
-        Log::alert('::::START Make Sum CHECK Gateways');
-
-        Log::info(json_encode(Gateway::all()));
-
+        Log::alert('::::START Make Sum CHECK');
+        //Log::info(json_encode(Gateway::all()));
        foreach ($promises_node as $point) {
         $value=$point->json();
         Log::info(json_encode($value));
@@ -237,21 +256,31 @@ class MasterController extends Controller
             $gateway=Gateway::where('id',$value['id'])->first();
             if($gateway){
             Log::alert('+++  Gateway '.$gateway->name . " weight:" .$gateway->weight);
-            $SumRation+=$gateway->weight;
+            $SumGateways+=$gateway->weight;
             }
         }else{
         Log::critical('----  Gateway '.$value['name'] . "  NOT FOUND");
         }
        }
 
+       foreach ($Master_node as $point) {
+        $value=$point->json();
+        Log::info(json_encode($value));
+        Log::alert('Master  '.$value['name'].' ID ' . $value['id']);
+        if($value['result']==true){
+             $SumMasters+=$value['sum'];
+            }
+        }
 
-       Log::alert('----  SumRation '.$SumRation. " ");
-       Log::alert('+++++++++ end Valid'.$SumRation. " ");
+        $total=$SumMasters+$SumGateways;
+       Log::alert('----  Sum of Gateways '.$SumGateways. " ");
+       Log::alert('----  Sum of Masters '.$SumMasters. " ");
+       Log::alert('+++++++++ end with Sum Valid : '.$total. " ");
 
         //$request->request->add(['hash' =>$hash ]);
         //dd($request);
         $result=0;
-        if($SumRation>50) $result=1;
+        if($total>50) $result=1;
         return view('validity',['result'=>$result]);
     }
     public function makeHash($single)
@@ -291,6 +320,73 @@ class MasterController extends Controller
     }
     public function from_master_check(Request $request)
     {
+
+
+        Log::alert('');
+        Log::alert('');
+        Log::alert('');
+        Log::alert('');
+
+        Log::alert('START CHECK Local in Master '.env('MASTER_NAME').'');
+        Log::alert('------------------');
+
+        $hash=$this->makeHash($request);
+        $data=[
+            'doc_id' =>$request->doc_id ,
+            'university_id' => $request->university_id,
+            'section_id' => $request->section_id,
+            'student_id' =>$request->student_id,
+            'college_id' => $request->college_id,
+            'stage_id'=>$request->stage_id,
+            'year_id'=>$request->year_id,
+            'average'=>$request->average,
+            'avg_1st_rank'=>$request->avg_1st_rank,
+            'study_type_id'=>$request->study_type_id,
+            'graduation_degree_id'=>$request->graduation_degree_id,
+            'number_date_graduation_degree'=>$request->number_date_graduation_degree,
+            'hash'=>$hash,
+            'type'=>"graduate"
+        ];
+        $promises_node = [];
+        $SumGateways=0;
+        $gateways=Gateway::all();
+
+         foreach ($gateways as $gateway) {
+            if($gateway->url!="") {
+                $path=$gateway->url."gateway/check/request";
+                Log::alert('+++ must to CHECK to Gateway '.$gateway->name . " URL:" .$path);
+                $promises_node[] = Http::acceptJson()->get($path,$data);
+            }else{
+                Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
+            }
+            }
+         //$responses_node = Utils::unwrap($promises_node);
+         Log::alert('::::END CHECK local Gateways');
+
+         foreach ($promises_node as $point) {
+            $value=$point->json();
+            Log::info(json_encode($value));
+            Log::alert('local Gateways '.$value['name'].' ID ' . $value['id']);
+            if($value['result']==true){
+                $gateway=Gateway::where('id',$value['id'])->first();
+                if($gateway){
+                Log::alert('+++ local  Gateway '.$gateway->name . " weight:" .$gateway->weight);
+                $SumGateways+=$gateway->weight;
+                }
+            }else{
+            Log::critical('----  Gateway '.$value['name'] . "  NOT FOUND");
+            }
+           }
+           Log::alert('sum Master '.env('MASTER_NAME').' is: ' . $SumGateways);
+           $response=[
+            'name'=>env('MASTER_NAME'),
+            'sum' => $SumGateways,
+            'result'=>true,
+        ];
+        Log::info(json_encode($response));
+         return $response;
+
+
          //first step send to all local node (gateways)
          $promises_node = [];
          $points=Gateway::all();
