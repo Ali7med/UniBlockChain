@@ -25,5 +25,10 @@ class MasterSeeder extends Seeder
             'url' => 'http://localhost/UniBlockChain2/public/api/',
             'is_me'=>false
         ]);
+        Master::create([
+            'name' => 'Mousul_Master',
+            'url' => 'http://192.168.0.241/UniBlockChain/public/api/',
+            'is_me'=>false
+        ]);
     }
 }
