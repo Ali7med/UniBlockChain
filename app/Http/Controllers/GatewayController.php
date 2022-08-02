@@ -51,15 +51,12 @@ class GatewayController extends Controller
         }
 
         $gateway=Gateway::where('name',env('GATEWAY_NAME'))->first();
-        Log::alert('::::the result isFound:'.$found);
-
-
         $response=[
             'id'=>$gateway->id,
             'name'=>$gateway->name,
             'result'=>$found,
         ];
-        Log::info(json_encode($response));
+        Log::alert('::::the result of Check Gateway is :'.json_encode($response));
          return $response;
     }
 
@@ -144,7 +141,9 @@ class GatewayController extends Controller
     public function store(Request $request)
     {
         // must to check the type of hash to store it
-        Log::alert("In Gateway Local store");
+        Log::alert("In Gateway Local store : " . env('GATEWAY_NAME'));
+        $doc=null;
+        $prev_hash="";
         $data= [
             'doc_id' => $request->doc_id ,
             'student_id' => $request->student_id ,
@@ -155,21 +154,10 @@ class GatewayController extends Controller
             'hash' => $request->hash,
             'prev_hash' => $request->prev_hash,
         ];
-        Log::info(json_encode($data));
-        $doc=null;
+        Log::info("received Data : ".json_encode($data));
         if($request->type=="all_stages"){
-           $doc= GatewayDataAllStage::create([
-                'doc_id' => $request->doc_id ,
-                'student_id' => $request->student_id ,
-                'university_id' => $request->university_id,
-                'college_id' => $request->college_id,
-                'section_id' => $request->section_id,
-                'stage_id' => $request->stage_id,
-                'hash' => $request->hash,
-                'prev_hash' => $request->prev_hash,
-            ]);
+           $doc= GatewayDataAllStage::create($data);
         }elseif($request->type=="graduate"){
-            $prev_hash="";
             // get last hash to create chain
             $result= GatewayDataGraduateOrder::where([
                 'doc_id' => $request->doc_id ,
@@ -179,8 +167,10 @@ class GatewayController extends Controller
                 'section_id' => $request->section_id,
                 'stage_id' => $request->stage_id
             ])->orderBy('id','desc')->first();
-            if($result) $prev_hash=$result->hash;
-            Log::info(json_encode($result));
+                if ($result) {
+                    $prev_hash=$result->hash;
+                    Log::info("prev_hash : ".json_encode($result));
+                }
             $doc=  GatewayDataGraduateOrder::create([
                 'doc_id' => $request->doc_id ,
                 'student_id' => $request->student_id ,
@@ -192,16 +182,7 @@ class GatewayController extends Controller
                 'prev_hash' => $prev_hash,
             ]);
         }elseif($request->type=="document"){
-            $doc=GatewayDataGraduateDocument::create([
-                'doc_id' => $request->doc_id ,
-                'student_id' => $request->student_id ,
-                'university_id' => $request->university_id,
-                'college_id' => $request->college_id,
-                'section_id' => $request->section_id,
-                'stage_id' => $request->stage_id,
-                'hash' => $request->hash,
-                'prev_hash' => $request->prev_hash,
-            ]);
+            $doc=GatewayDataGraduateDocument::create($data);
         }else{
             Log::error("In Gateway store the type not any type known");
         }

@@ -224,6 +224,35 @@ class MasterController extends Controller
                 Log::alert('+++ Gateway '.$gateway->name . " Don't have URL");
             }
             }
+            $SumGateways=0;
+        $SumMasters=0;
+        $gateway=null;
+        Log::alert('::::START Make Sum CHECK');
+        //Log::info(json_encode(Gateway::all()));
+       foreach ($promises_node as $point) {
+        $value=$point->json();
+        Log::info(json_encode($value));
+        Log::alert('Gateways '.$value['name'].' ID ' . $value['id']);
+        if($value['result']==true){
+            $gateway=Gateway::where('id',$value['id'])->first();
+            if($gateway){
+            Log::alert('+++  Gateway '.$gateway->name . " weight:" .$gateway->weight);
+            $SumGateways+=$gateway->weight;
+            }
+        }else{
+        Log::critical('----  Gateway '.$value['name'] . "  NOT FOUND");
+        }
+       }
+       $total=$SumMasters+$SumGateways;
+       Log::alert('----  Sum of Gateways '.$SumGateways. " ");
+        Log::alert('+++++++++ end with Sum Valid : '.$total. " ");
+
+        //$request->request->add(['hash' =>$hash ]);
+        //dd($request);
+        $result=0;
+        if($total>50) $result=1;
+        return view('validity',['result'=>$result]);
+
          //$responses_node = Utils::unwrap($promises_node);
          Log::alert('::::END CHECK Gateways');
 
@@ -243,30 +272,11 @@ class MasterController extends Controller
           //$responses_node = Utils::unwrap($Master_node);
           Log::alert('::::END CHECK master');
         // make summation the
-        $SumGateways=0;
-        $SumMasters=0;
-        $gateway=null;
-        Log::alert('::::START Make Sum CHECK');
-        //Log::info(json_encode(Gateway::all()));
-       foreach ($promises_node as $point) {
-        $value=$point->json();
-        Log::info(json_encode($value));
-        Log::alert('Gateways '.$value['name'].' ID ' . $value['id']);
-        if($value['result']==true){
-            $gateway=Gateway::where('id',$value['id'])->first();
-            if($gateway){
-            Log::alert('+++  Gateway '.$gateway->name . " weight:" .$gateway->weight);
-            $SumGateways+=$gateway->weight;
-            }
-        }else{
-        Log::critical('----  Gateway '.$value['name'] . "  NOT FOUND");
-        }
-       }
-
+        Log::info(json_encode($Master_node));
        foreach ($Master_node as $point) {
         $value=$point->json();
         Log::info(json_encode($value));
-        Log::alert('Master  '.$value['name'].' ID ' . $value['id']);
+        //Log::alert('Master '.$value['name']);
         if($value['result']==true){
              $SumMasters+=$value['sum'];
             }
@@ -320,16 +330,11 @@ class MasterController extends Controller
     }
     public function from_master_check(Request $request)
     {
-
-
         Log::alert('');
         Log::alert('');
         Log::alert('');
-        Log::alert('');
-
-        Log::alert('START CHECK Local in Master '.env('MASTER_NAME').'');
+        Log::alert('START CHECK Local (from_master_check) in Master '.env('MASTER_NAME').'');
         Log::alert('------------------');
-
         $hash=$this->makeHash($request);
         $data=[
             'doc_id' =>$request->doc_id ,
@@ -385,26 +390,6 @@ class MasterController extends Controller
         ];
         Log::info(json_encode($response));
          return $response;
-
-
-         //first step send to all local node (gateways)
-         $promises_node = [];
-         $points=Gateway::all();
-         foreach ($points as $point) {
-             $promises_node[] = Http::async()->get($point->url."/gateway/check/request",$request);
-         }
-         $responses_node = Utils::unwrap($promises_node);
-         // make summation the
-         $SumRation=0;
-        foreach ($responses_node as $point) {
-            if($point->result==true){
-                $SumRation+=Gateway::find($point->id)->weight;
-            }
-
-        }
-
-         //dd($responses_node);
-         return $SumRation ;
     }
     /**
      * Display the specified resource.
